@@ -1,0 +1,35 @@
+server:
+  port: ${USER_SERVICE_APP_PORT}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${USER_SERVICE_DB_HOST}:${USER_SERVICE_DB_PORT}/fc-food-curt-service
+    username: ${USER_SERVICE_DB_USER}
+    password: ${USER_SERVICE_DB_PASS}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    table: flyway_schema_history
+    clean-disabled: true
+    out-of-order: false
+
+  sql:
+    init:
+      mode: never
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

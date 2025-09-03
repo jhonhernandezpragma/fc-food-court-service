@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: food-curt_service
+    description: microservice responsible for managing restaurants, dishes, and orders.
+    version: 1.0.0
+  profiles:
+    active: local
+
+app:
+  api:
+    prefix: /api/v1
