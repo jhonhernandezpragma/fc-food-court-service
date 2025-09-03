@@ -33,6 +33,7 @@ ext {
     openApiStarterVersion = "2.8.11"
     springSecurityVersion = "6.5.3"
     openapiWebMvcUIVersion = "2.8.11"
+    feignVersion = "4.3.0"
 }
 
 dependencies {
@@ -67,6 +68,9 @@ dependencies {
 
     // JUnit
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Feign
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignVersion}"
 
 }
 
