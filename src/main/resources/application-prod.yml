@@ -1,11 +1,11 @@
 server:
-  port: ${USER_SERVICE_APP_PORT}
+  port: ${FC_SERVICE_APP_PORT}
 
 spring:
   datasource:
-    url: jdbc:postgresql://${USER_SERVICE_DB_HOST}:${USER_SERVICE_DB_PORT}/fc-food-curt-service
-    username: ${USER_SERVICE_DB_USER}
-    password: ${USER_SERVICE_DB_PASS}
+    url: jdbc:postgresql://${FC_SERVICE_DB_HOST}:${FC_SERVICE_DB_PORT}/fc-food-curt-service
+    username: ${FC_SERVICE_DB_USER}
+    password: ${FC_SERVICE_DB_PASS}
 
   jpa:
     hibernate:
@@ -33,3 +33,7 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+users:
+  service:
+    url: ${USER_MICRO_URL}
