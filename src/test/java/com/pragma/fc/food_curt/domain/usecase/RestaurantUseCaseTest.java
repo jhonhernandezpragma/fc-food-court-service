@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,10 +28,10 @@ public class RestaurantUseCaseTest {
     @Mock
     IUserClientPort userClientPort;
 
-    Restaurant createRestaurant(String name, Long ownerDocumentNumber) {
+    Restaurant createRestaurant(String name) {
         return new Restaurant(
                 123L,
-                ownerDocumentNumber,
+                213L,
                 name,
                 "Restaurant address",
                 "Restaurant phone",
@@ -47,7 +46,7 @@ public class RestaurantUseCaseTest {
                 invocation -> invocation.getArgument(0)
         );
 
-        Restaurant restaurant = createRestaurant("Restaurant name", 213L);
+        Restaurant restaurant = createRestaurant("Restaurant name");
 
         Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant);
 
@@ -66,7 +65,7 @@ public class RestaurantUseCaseTest {
                 invocation -> invocation.getArgument(0)
         );
 
-        Restaurant restaurant = createRestaurant("Restaurant name", 213L);
+        Restaurant restaurant = createRestaurant("Restaurant name");
 
         Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant);
 
@@ -75,7 +74,7 @@ public class RestaurantUseCaseTest {
 
     @Test
     void shouldFailToCreateRestaurantWithNameWithOnlyNumbers() {
-        Restaurant restaurant = createRestaurant("99999009", 213L);
+        Restaurant restaurant = createRestaurant("99999009");
 
         assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant))
                 .isInstanceOf(RestaurantInvalidNameException.class)
@@ -86,7 +85,7 @@ public class RestaurantUseCaseTest {
     void shouldFailToCreateRestaurantWhenOwnerDocumentDoesNotBelongToOwner() {
         when(userClientPort.isOwner(213L)).thenReturn(false);
 
-        Restaurant restaurant = createRestaurant("Restaurant name", 213L);
+        Restaurant restaurant = createRestaurant("Restaurant name");
 
         assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant))
                 .isInstanceOf(RestaurantInvalidUserRoleException.class)

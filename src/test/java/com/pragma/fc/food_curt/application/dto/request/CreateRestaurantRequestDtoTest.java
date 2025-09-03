@@ -2,14 +2,13 @@ package com.pragma.fc.food_curt.application.dto.request;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pragma.fc.food_curt.application.dto.response.CreateRestaurantResponseDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CreateRestaurantRequestDtoTest {
+class CreateRestaurantRequestDtoTest {
     @Test
     void shouldSerializeOnlyExpectedFields() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
