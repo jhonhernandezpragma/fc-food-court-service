@@ -1,4 +1,12 @@
-INSERT INTO roles (name) VALUES (1, 'ROLE_ADMIN');
-INSERT INTO roles (name) VALUES (2, 'ROLE_OWNER');
-INSERT INTO roles (name) VALUES (3, 'ROLE_WORKER');
-INSERT INTO roles (name) VALUES (4, 'ROLE_CUSTOMER');
+INSERT INTO public.dish_categories ( name)
+VALUES
+  ('Entradas'),
+  ('Sopas'),
+  ('Ensaladas'),
+  ('Platos principales'),
+  ('Pastas'),
+  ('Mariscos'),
+  ('Parrilla'),
+  ('Vegetariano'),
+  ('Postres'),
+  ('Bebidas');
