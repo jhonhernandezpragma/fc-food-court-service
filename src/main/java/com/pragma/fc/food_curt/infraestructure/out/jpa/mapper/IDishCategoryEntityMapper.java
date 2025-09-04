@@ -1,8 +1,7 @@
 package com.pragma.fc.food_curt.infraestructure.out.jpa.mapper;
 
-
-import com.pragma.fc.food_curt.domain.model.Restaurant;
-import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.RestaurantEntity;
+import com.pragma.fc.food_curt.domain.model.DishCategory;
+import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.DishCategoryEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
@@ -12,10 +11,9 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface IRestaurantEntityMapper {
+public interface IDishCategoryEntityMapper {
     @Named("modelToEntity")
-    RestaurantEntity toEntity(Restaurant restaurant);
-
+    DishCategoryEntity toEntity(DishCategory dishCategory);
     @Named("entityToModel")
-    Restaurant toModel(RestaurantEntity entity);
+    DishCategory toModel(DishCategoryEntity entity);
 }

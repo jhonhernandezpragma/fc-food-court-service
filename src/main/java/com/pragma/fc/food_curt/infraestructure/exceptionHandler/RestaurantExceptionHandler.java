@@ -3,6 +3,7 @@ package com.pragma.fc.food_curt.infraestructure.exceptionHandler;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidNameException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidUserRoleException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantAlreadyExistsException;
+import com.pragma.fc.food_curt.infraestructure.exception.RestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -29,5 +30,10 @@ public class RestaurantExceptionHandler {
     @ExceptionHandler(RestaurantAlreadyExistsException.class)
     public ResponseEntity<ApiError> handleRestaurantAlreadyExists(RestaurantAlreadyExistsException ex, WebRequest request) {
         return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<ApiError> handleRestaurantNotFound(RestaurantNotFoundException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 }
