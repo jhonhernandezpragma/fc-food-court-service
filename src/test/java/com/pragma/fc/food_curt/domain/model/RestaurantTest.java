@@ -1,6 +1,5 @@
-package com.pragma.fc.food_curt.domain.entity;
+package com.pragma.fc.food_curt.domain.model;
 
-import com.pragma.fc.food_curt.domain.model.Restaurant;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
