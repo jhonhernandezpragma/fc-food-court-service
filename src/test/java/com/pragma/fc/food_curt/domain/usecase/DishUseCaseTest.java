@@ -102,4 +102,27 @@ class DishUseCaseTest {
 
         verify(dishPersistencePort).createDish(dish);
     }
+
+    @Test
+    void shouldUpdateDishSuccessfully() {
+        Dish dish = createDish(15000.0);
+        dish.setDescription("New description");
+
+        when(dishPersistencePort.updateDish(1, 15000.0, "New description"))
+                .thenReturn(dish);
+
+
+        Dish newDish = dishUseCase.updateDish(1, 15000.0, "New description" );
+
+        assertThat(newDish.getId()).isEqualTo(dish.getId());
+        assertThat(newDish.getDescription()).isEqualTo(dish.getDescription());
+        assertThat(newDish.getPrice()).isEqualTo(dish.getPrice());
+    }
+
+    @Test
+    void shouldFailToUpdateDishWhenPriceIsNotPositive() {
+        assertThatThrownBy(() -> dishUseCase.updateDish(1, -10.0, "Description"))
+                .isInstanceOf(DishNonPositivePriceException.class)
+                .hasMessageContaining("-10");
+    }
 }

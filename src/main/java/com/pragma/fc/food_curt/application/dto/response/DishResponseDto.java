@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateDishResponseDto {
+public class DishResponseDto {
     private Integer id;
     private DishCategoryResponseDto category;
     private RestaurantSummaryResponseDto restaurant;

@@ -14,13 +14,22 @@ public class DishUseCase implements IDishServicePort {
 
     @Override
     public Dish createDish(Dish dish) {
-        if(dish.getPrice() <= 0) {
-            throw new DishNonPositivePriceException(dish.getPrice());
-        }
+        validatePrice(dish.getPrice());
 
         dish.setActive(true);
 
         return dishPersistencePort.createDish(dish);
+    }
 
+    @Override
+    public Dish updateDish(Integer id, Double price, String description) {
+        validatePrice(price);
+        return dishPersistencePort.updateDish(id, price, description);
+    }
+
+    private void validatePrice(Double price) {
+        if(price <= 0) {
+            throw new DishNonPositivePriceException(price);
+        }
     }
 }

@@ -1,7 +1,8 @@
 package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateDishRequestDto;
-import com.pragma.fc.food_curt.application.dto.response.CreateDishResponseDto;
+import com.pragma.fc.food_curt.application.dto.request.UpdateDishRequestDto;
+import com.pragma.fc.food_curt.application.dto.response.DishResponseDto;
 import com.pragma.fc.food_curt.application.handler.IDishHandler;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiSuccess;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +32,7 @@ public class DishController {
     @Operation(summary = "Create dish by owner",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Dish created",
-                            content = @Content(contentSchema = @Schema(implementation = CreateDishResponseDto.class))),
+                            content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = """
                         1. Dish price must be greater than zero
                         2. Invalid request payload (validation error)
@@ -41,12 +44,35 @@ public class DishController {
             }
     )
     @PostMapping
-    public ResponseEntity<ApiSuccess<CreateDishResponseDto>> createDish(@RequestBody @Valid CreateDishRequestDto dto) {
-        CreateDishResponseDto response = dishHandler.createDish(dto);
+    public ResponseEntity<ApiSuccess<DishResponseDto>> createDish(@RequestBody @Valid CreateDishRequestDto dto) {
+        DishResponseDto response = dishHandler.createDish(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiSuccess<>(
                         "Dish created successfully",
+                        response
+                ));
+    }
+
+    @Operation(summary = "Update dish by owner",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Dish updated",
+                            content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = """
+                        1. Dish price must be greater than zero
+                        2. Invalid request payload (validation error)
+                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Dish not found",
+                            content = @Content(contentSchema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiSuccess<DishResponseDto>> updateDish(@RequestBody @Valid UpdateDishRequestDto dto, @PathVariable Integer id) {
+        DishResponseDto response = dishHandler.updateDish(id, dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess<>(
+                        "Dish updated successfully",
                         response
                 ));
     }
