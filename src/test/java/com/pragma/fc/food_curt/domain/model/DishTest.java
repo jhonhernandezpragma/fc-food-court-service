@@ -35,7 +35,7 @@ class DishTest {
         assertThat(dish.getDescription()).isEqualTo("A tasty and healthy dish description");
         assertThat(dish.getPrice()).isEqualTo(25000.0);
         assertThat(dish.getImageUrl()).isEqualTo("https://example.com/images/dish.jpg");
-        assertThat(dish.isActive()).isTrue();
+        assertThat(dish.getIsActive()).isTrue();
     }
 
     @Test
@@ -60,7 +60,7 @@ class DishTest {
         dish.setDescription("A tasty and healthy dish description");
         dish.setPrice(25000.0);
         dish.setImageUrl("https://example.com/images/dish.jpg");
-        dish.setActive(true);
+        dish.setIsActive(true);
 
         assertThat(dish.getId()).isEqualTo(10);
 
@@ -80,6 +80,6 @@ class DishTest {
         assertThat(dish.getDescription()).isEqualTo("A tasty and healthy dish description");
         assertThat(dish.getPrice()).isEqualTo(25000.0);
         assertThat(dish.getImageUrl()).isEqualTo("https://example.com/images/dish.jpg");
-        assertThat(dish.isActive()).isTrue();
+        assertThat(dish.getIsActive()).isTrue();
     }
 }

@@ -46,7 +46,7 @@ class DishUseCaseTest {
         dish.setDescription("A tasty and healthy dish description");
         dish.setPrice(price);
         dish.setImageUrl("https://example.com/images/dish.jpg");
-        dish.setActive(true);
+        dish.setIsActive(true);
         return dish;
     }
 
@@ -67,7 +67,7 @@ class DishUseCaseTest {
         assertThat(newDish.getDescription()).isEqualTo("A tasty and healthy dish description");
         assertThat(newDish.getPrice()).isEqualTo(25000.0);
         assertThat(newDish.getImageUrl()).isEqualTo("https://example.com/images/dish.jpg");
-        assertThat(newDish.isActive()).isTrue();
+        assertThat(newDish.getIsActive()).isTrue();
     }
 
     @Test
@@ -88,7 +88,7 @@ class DishUseCaseTest {
 
         Dish newDish = dishUseCase.createDish(dish);
 
-        assertThat(newDish.isActive()).isTrue();
+        assertThat(newDish.getIsActive()).isTrue();
     }
 
     @Test
