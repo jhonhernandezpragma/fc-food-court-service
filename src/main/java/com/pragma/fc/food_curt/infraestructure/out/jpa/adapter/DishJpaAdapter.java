@@ -3,6 +3,7 @@ package com.pragma.fc.food_curt.infraestructure.out.jpa.adapter;
 import com.pragma.fc.food_curt.domain.model.Dish;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
 import com.pragma.fc.food_curt.infraestructure.exception.DishCategoryNotFoundException;
+import com.pragma.fc.food_curt.infraestructure.exception.DishNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.DishCategoryEntity;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.DishEntity;
@@ -40,5 +41,17 @@ public class DishJpaAdapter implements IDishPersistencePort {
 
         DishEntity newDishEntity = dishRepository.save(dishEntity);
         return dishEntityMapper.toModel(newDishEntity);
+    }
+
+    @Override
+    public Dish updateDish(Integer id, Double price, String description) {
+        DishEntity dishEntity = dishRepository.findById(id)
+                .orElseThrow(() -> new DishNotFoundException(id));
+
+        if(price != null) dishEntity.setPrice(price);
+        if(description != null) dishEntity.setDescription(description);
+
+        DishEntity updatedDish = dishRepository.save(dishEntity);
+        return dishEntityMapper.toModel(updatedDish);
     }
 }
