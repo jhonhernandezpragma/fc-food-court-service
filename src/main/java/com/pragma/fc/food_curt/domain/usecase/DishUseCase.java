@@ -16,7 +16,7 @@ public class DishUseCase implements IDishServicePort {
     public Dish createDish(Dish dish) {
         validatePrice(dish.getPrice());
 
-        dish.setActive(true);
+        dish.setIsActive(true);
 
         return dishPersistencePort.createDish(dish);
     }

@@ -41,5 +41,5 @@ public class DishEntity {
     private String imageUrl;
 
     @Column(nullable = false)
-    private boolean isActive;
+    private Boolean isActive;
 }
