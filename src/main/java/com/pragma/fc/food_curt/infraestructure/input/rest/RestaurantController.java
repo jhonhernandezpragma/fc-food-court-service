@@ -26,9 +26,9 @@ public class RestaurantController {
         this.restaurantHandler = restaurantHandler;
     }
 
-    @Operation(summary = "Create restaurant by owner",
+    @Operation(summary = "Create restaurant by admin",
         responses = {
-            @ApiResponse(responseCode = "201", description = "User created",
+            @ApiResponse(responseCode = "201", description = "Restaurant created",
                     content = @Content(contentSchema = @Schema(implementation = CreateRestaurantResponseDto.class))),
                 @ApiResponse(responseCode = "404", description = """
                         1. Invalid restaurant name
