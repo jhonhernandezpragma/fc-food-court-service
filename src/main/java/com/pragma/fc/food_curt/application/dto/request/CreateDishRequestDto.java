@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CreateDishRequestDto {
     @PositiveOrZero
     private Integer categoryId;
