@@ -9,12 +9,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateDishResponseDtoTest {
+class DishResponseDtoTest {
     @Test
     void shouldSerializeOnlyExpectedFields() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
-        CreateDishResponseDto dto = new CreateDishResponseDto();
+        DishResponseDto dto = new DishResponseDto();
         dto.setId(2);
         dto.setName("Restaurant name");
 
