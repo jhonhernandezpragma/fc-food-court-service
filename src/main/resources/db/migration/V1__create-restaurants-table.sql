@@ -9,6 +9,5 @@ CREATE TABLE "public"."restaurants" (
     PRIMARY KEY ("nit")
 );
 
-
 -- Indices
 CREATE UNIQUE INDEX restaurants_name_key ON public.restaurants USING btree (name);

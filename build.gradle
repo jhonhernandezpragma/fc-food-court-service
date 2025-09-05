@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.pragma.fc'
 version = '0.0.1-SNAPSHOT'
-description = 'User microservice'
+description = 'Food Curt microservice'
 
 java {
     toolchain {
@@ -31,9 +31,10 @@ ext {
     lombokVersion = "1.18.38"
     lombokMapstructBindingVersion = "0.2.0"
     openApiStarterVersion = "2.8.11"
-    springSecurityVersion = "6.5.3"
+    springSecurityVersion = "3.5.5"
     openapiWebMvcUIVersion = "2.8.11"
     feignVersion = "4.3.0"
+    jjwtVersion = "0.11.5"
 }
 
 dependencies {
