@@ -44,7 +44,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-security:${springSecurityVersion}"
 
     // Flyway + DB
     implementation 'org.flywaydb:flyway-core'
@@ -72,6 +72,10 @@ dependencies {
     // Feign
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignVersion}"
 
+    // JJWT
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
 }
 
 tasks.named('test') {
