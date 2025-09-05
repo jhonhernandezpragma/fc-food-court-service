@@ -37,3 +37,6 @@ springdoc:
 users:
   service:
     url: ${USER_MICRO_URL}
+
+jwt:
+  secret: ${JWT_SECRET_KEY}

@@ -6,8 +6,11 @@ import com.pragma.fc.food_curt.application.mapper.ICreateRestaurantRequestMapper
 import com.pragma.fc.food_curt.application.mapper.ICreateRestaurantResponseMapper;
 import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
+import com.pragma.fc.food_curt.infraestructure.input.security.entity.JwtAuthenticationToken;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,8 +23,13 @@ public class RestaurantHandler implements IRestaurantHandler {
 
     @Override
     public CreateRestaurantResponseDto createRestaurant(CreateRestaurantRequestDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String token = null;
+
+        if(authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) { token = jwtAuthenticationToken.getToken(); }
+
         Restaurant restaurant = createRestaurantRequestMapper.toModel(dto);
-        Restaurant newRestaurant = restaurantServicePort.createRestaurant(restaurant);
+        Restaurant newRestaurant = restaurantServicePort.createRestaurant(restaurant, token);
         return createRestaurantResponseMapper.toDto(newRestaurant);
     }
 }

@@ -41,14 +41,14 @@ public class RestaurantUseCaseTest {
 
     @Test
     void shouldCreateRestaurantSuccessfully() {
-        when(userClientPort.isOwner(213L)).thenReturn(true);
+        when(userClientPort.isOwner(213L, "token")).thenReturn(true);
         when(restaurantPersistencePort.createRestaurant(any(Restaurant.class))).thenAnswer(
                 invocation -> invocation.getArgument(0)
         );
 
         Restaurant restaurant = createRestaurant("Restaurant name");
 
-        Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant);
+        Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant, "token");
 
         assertThat(newRestaurant.getNit()).isEqualTo(restaurant.getNit());
         assertThat(newRestaurant.getOwnerDocumentNumber()).isEqualTo(restaurant.getOwnerDocumentNumber());
@@ -60,14 +60,14 @@ public class RestaurantUseCaseTest {
 
     @Test
     void shouldPersistRestaurantWhenCreateIsCalled() {
-        when(userClientPort.isOwner(213L)).thenReturn(true);
+        when(userClientPort.isOwner(213L, "token")).thenReturn(true);
         when(restaurantPersistencePort.createRestaurant(any(Restaurant.class))).thenAnswer(
                 invocation -> invocation.getArgument(0)
         );
 
         Restaurant restaurant = createRestaurant("Restaurant name");
 
-        Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant);
+        Restaurant newRestaurant = restaurantUseCase.createRestaurant(restaurant, "token");
 
         verify(restaurantPersistencePort).createRestaurant(newRestaurant);
     }
@@ -76,18 +76,18 @@ public class RestaurantUseCaseTest {
     void shouldFailToCreateRestaurantWithNameWithOnlyNumbers() {
         Restaurant restaurant = createRestaurant("99999009");
 
-        assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant))
+        assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant, "token"))
                 .isInstanceOf(RestaurantInvalidNameException.class)
                 .hasMessageContaining("99999009");
     }
 
     @Test
     void shouldFailToCreateRestaurantWhenOwnerDocumentDoesNotBelongToOwner() {
-        when(userClientPort.isOwner(213L)).thenReturn(false);
+        when(userClientPort.isOwner(213L, "token")).thenReturn(false);
 
         Restaurant restaurant = createRestaurant("Restaurant name");
 
-        assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant))
+        assertThatThrownBy(() -> restaurantUseCase.createRestaurant(restaurant, "token"))
                 .isInstanceOf(RestaurantInvalidUserRoleException.class)
                 .hasMessageContaining("213");
     }

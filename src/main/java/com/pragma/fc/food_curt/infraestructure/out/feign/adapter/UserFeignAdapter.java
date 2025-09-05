@@ -14,8 +14,8 @@ public class UserFeignAdapter implements IUserClientPort {
     }
 
     @Override
-    public Boolean isOwner(Long documentNumber) {
-        ApiSuccess<UserRoleResponseDto> response = userClientFeign.validateUserRole(documentNumber);
+    public Boolean isOwner(Long documentNumber, String token) {
+        ApiSuccess<UserRoleResponseDto> response = userClientFeign.validateUserRole(documentNumber, "Bearer " + token);
 
         if (response == null || response.getPayload() == null || response.getPayload().getName() == null) {
             return false;
@@ -23,5 +23,4 @@ public class UserFeignAdapter implements IUserClientPort {
 
         return UserRole.OWNER.name().equals(response.getPayload().getName());
     }
-
 }
