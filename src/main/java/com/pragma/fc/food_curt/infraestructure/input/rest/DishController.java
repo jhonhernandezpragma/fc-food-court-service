@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,9 @@ public class DishController {
         this.dishHandler = dishHandler;
     }
 
-    @Operation(summary = "Create dish by owner",
+    @Operation(
+            summary = "Create dish",
+            description = "Requires role OWNER",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Dish created",
                             content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
@@ -40,9 +43,14 @@ public class DishController {
                     @ApiResponse(responseCode = "404", description = """
                         1. Dish category not found
                         2. Restaurant not found
-                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class)))
+                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "User already exists",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
             }
     )
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping
     public ResponseEntity<ApiSuccess<DishResponseDto>> createDish(@RequestBody @Valid CreateDishRequestDto dto) {
         DishResponseDto response = dishHandler.createDish(dto);
@@ -54,7 +62,9 @@ public class DishController {
                 ));
     }
 
-    @Operation(summary = "Update dish by owner",
+    @Operation(
+            summary = "Update dish",
+            description = "Requires role OWNER",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Dish updated",
                             content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
@@ -63,9 +73,14 @@ public class DishController {
                         2. Invalid request payload (validation error)
                         """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Dish not found",
-                            content = @Content(contentSchema = @Schema(implementation = ApiError.class)))
+                            content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "User already exists",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
             }
     )
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{id}")
     public ResponseEntity<ApiSuccess<DishResponseDto>> updateDish(@RequestBody @Valid UpdateDishRequestDto dto, @PathVariable Integer id) {
         DishResponseDto response = dishHandler.updateDish(id, dto);
