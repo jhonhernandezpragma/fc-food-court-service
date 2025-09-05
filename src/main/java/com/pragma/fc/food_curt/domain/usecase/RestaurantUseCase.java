@@ -17,12 +17,12 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public Restaurant createRestaurant(Restaurant restaurant) {
+    public Restaurant createRestaurant(Restaurant restaurant, String token) {
         if(restaurant.getName().matches("\\d+")) {
             throw new RestaurantInvalidNameException(restaurant.getName());
         }
 
-        if(!userClientPort.isOwner(restaurant.getOwnerDocumentNumber())) {
+        if(!userClientPort.isOwner(restaurant.getOwnerDocumentNumber(), token)) {
             throw new RestaurantInvalidUserRoleException(restaurant.getOwnerDocumentNumber());
         }
 
