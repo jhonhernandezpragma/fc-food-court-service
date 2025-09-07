@@ -1,6 +1,7 @@
 package com.pragma.fc.food_curt.infraestructure.out.jpa.adapter;
 
 import com.pragma.fc.food_curt.domain.model.Dish;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
 import com.pragma.fc.food_curt.infraestructure.exception.DishCategoryNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.DishNotFoundException;
@@ -12,6 +13,12 @@ import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IDishEntityMapper;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IDishCategoryRepository;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IDishRepository;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IRestaurantRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.Optional;
 
 public class DishJpaAdapter implements IDishPersistencePort {
     private final IDishRepository dishRepository;
@@ -68,5 +75,31 @@ public class DishJpaAdapter implements IDishPersistencePort {
     @Override
     public Boolean existsDishByIdAndRestaurantOwner(Integer dishId, Long ownerDocumentNumber) {
         return dishRepository.existsByIdAndRestaurantOwnerDocumentNumber(dishId, ownerDocumentNumber);
+    }
+
+    @Override
+    public Pagination<Dish> getPaginatedByCategoryIdSortedByName(int page, int size, Optional<Integer> categoryId) {
+        Sort sort = Sort.by("name");
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+
+        Page<DishEntity> dishEntityPage = categoryId
+                .map(id -> dishRepository.findAllByCategoryId(id, pageable))
+                .orElseGet(() -> dishRepository.findAll(pageable));
+
+        Pagination<Dish> pagination = new Pagination<>();
+        pagination.setItems(dishEntityPage.getContent()
+                .stream()
+                .map(dishEntityMapper::toModel)
+                .toList()
+        );
+        pagination.setCurrentPageNumber(page);
+        pagination.setCurrentItemCount(dishEntityPage.getNumberOfElements());
+        pagination.setFirstPage(dishEntityPage.isFirst());
+        pagination.setLastPage(dishEntityPage.isLast());
+        pagination.setTotalItems(dishEntityPage.getTotalElements());
+        pagination.setTotalPages(dishEntityPage.getTotalPages());
+        pagination.setPageSize(size);
+
+        return pagination;
     }
 }
