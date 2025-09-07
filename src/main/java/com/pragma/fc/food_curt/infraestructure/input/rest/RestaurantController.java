@@ -42,9 +42,9 @@ public class RestaurantController {
                         3. User role should be OWNER
                         """,
                         content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
-                @ApiResponse(responseCode = "401", description = "User already exists",
+                @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
                         content = @Content(schema = @Schema(implementation = ApiError.class))),
-                @ApiResponse(responseCode = "403", description = "Missing or invalid access token",
+                @ApiResponse(responseCode = "403", description = "Forbidden: requires role ADMIN",
                         content = @Content(schema = @Schema(implementation = ApiError.class)))
         }
     )
@@ -67,23 +67,19 @@ public class RestaurantController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Restaurant NIT retrieved successfully",
-                            content = @Content(schema = @Schema(implementation = ApiSuccess.class))
-                    ),
+                            content = @Content(schema = @Schema(implementation = ApiSuccess.class))),
                     @ApiResponse(
                             responseCode = "404",
                             description = "No restaurant found for the given owner",
-                            content = @Content(schema = @Schema(implementation = ApiError.class))
-                    ),
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized: missing or invalid access token",
-                            content = @Content(schema = @Schema(implementation = ApiError.class))
-                    ),
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(
                             responseCode = "403",
                             description = "Forbidden: requires role OWNER",
-                            content = @Content(schema = @Schema(implementation = ApiError.class))
-                    )
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @PreAuthorize("hasRole('OWNER')")

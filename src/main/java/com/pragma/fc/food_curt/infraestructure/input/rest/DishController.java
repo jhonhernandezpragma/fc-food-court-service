@@ -2,6 +2,7 @@ package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateDishRequestDto;
 import com.pragma.fc.food_curt.application.dto.request.UpdateDishRequestDto;
+import com.pragma.fc.food_curt.application.dto.request.UpdateDishStatusRequestDto;
 import com.pragma.fc.food_curt.application.dto.response.DishResponseDto;
 import com.pragma.fc.food_curt.application.handler.IDishHandler;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,10 +46,10 @@ public class DishController {
                         1. Dish category not found
                         2. Restaurant not found
                         """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "401", description = "User already exists",
+                    @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "403", description = "Missing or invalid access token",
-                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden: requires role OWNER",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @PreAuthorize("hasRole('OWNER')")
@@ -74,10 +76,10 @@ public class DishController {
                         """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Dish not found",
                             content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "401", description = "User already exists",
+                    @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "403", description = "Missing or invalid access token",
-                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden: requires role OWNER",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @PreAuthorize("hasRole('OWNER')")
