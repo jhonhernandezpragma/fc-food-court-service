@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateRestaurantResponseDto {
+public class RestaurantResponseDto {
     private Long nit;
     private Long ownerDocumentNumber;
     private String name;

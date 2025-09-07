@@ -8,13 +8,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateRestaurantResponseDtoTest {
+class RestaurantResponseDtoTest {
 
     @Test
     void shouldSerializeOnlyExpectedFields() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        CreateRestaurantResponseDto dto = new CreateRestaurantResponseDto();
+        RestaurantResponseDto dto = new RestaurantResponseDto();
         dto.setNit(123L);
         dto.setOwnerDocumentNumber(213L);
         dto.setName("Restaurant name");
