@@ -3,9 +3,13 @@ package com.pragma.fc.food_curt.domain.usecase;
 import com.pragma.fc.food_curt.domain.api.IDishServicePort;
 import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.exception.DishNonPositivePriceException;
+import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OwnerNotAuthorizedForRestaurantException;
 import com.pragma.fc.food_curt.domain.model.Dish;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
+
+import java.util.Optional;
 
 public class DishUseCase implements IDishServicePort {
     private final IDishPersistencePort dishPersistencePort;
@@ -44,6 +48,19 @@ public class DishUseCase implements IDishServicePort {
         }
 
         return dishPersistencePort.updateDishStatus(id,isActive);
+    }
+
+    @Override
+    public Pagination<Dish> getPaginatedByCategoryIdSortedByName(int page, int size, Optional<Integer> categoryId) {
+        if(page < 1) {
+            throw new InvalidPaginationParameterException("Page must be greater than or equal to 1");
+        }
+
+        if(size > 100) {
+            throw new InvalidPaginationParameterException("Page size must be less than or equal to 100");
+        }
+
+        return dishPersistencePort.getPaginatedByCategoryIdSortedByName(page, size, categoryId);
     }
 
     private void validatePrice(Double price) {
