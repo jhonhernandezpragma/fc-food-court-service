@@ -1,9 +1,11 @@
 package com.pragma.fc.food_curt.domain.usecase;
 
 import com.pragma.fc.food_curt.domain.exception.DishNonPositivePriceException;
+import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OwnerNotAuthorizedForRestaurantException;
 import com.pragma.fc.food_curt.domain.model.Dish;
 import com.pragma.fc.food_curt.domain.model.DishCategory;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
 import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
@@ -12,6 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -162,5 +167,73 @@ class DishUseCaseTest {
 
         assertThatThrownBy(() -> dishUseCase.updateDishStatus(1, false, 123L))
                 .isInstanceOf(OwnerNotAuthorizedForRestaurantException.class);
+    }
+
+    @Test
+    void shouldReturnPaginatedRestaurantsWhenParametersAreValid() {
+        Pagination<Dish> pagination = new Pagination<>();
+        Dish r1 = createDish(123D);
+        Dish r2 = createDish(123D);
+        pagination.setItems(Arrays.asList(r1, r2));
+        pagination.setCurrentPageNumber(1);
+        pagination.setCurrentItemCount(2);
+        pagination.setTotalItems(2);
+        pagination.setTotalPages(1);
+        pagination.setPageSize(10);
+
+        when(dishPersistencePort.getPaginatedByCategoryIdSortedByName(1, 10, Optional.of(12)))
+                .thenReturn(pagination);
+
+        Pagination<Dish> result = dishUseCase.getPaginatedByCategoryIdSortedByName(1, 10, Optional.of(12));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getItems()).hasSize(2);
+
+        verify(dishPersistencePort).getPaginatedByCategoryIdSortedByName(1, 10, Optional.of(12));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenPageIsLessThanOne() {
+        assertThatThrownBy(() -> dishUseCase.getPaginatedByCategoryIdSortedByName(0, 10, Optional.empty()))
+                .isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page must be greater than or equal to 1");
+
+        verify(dishPersistencePort, never()).getPaginatedByCategoryIdSortedByName(anyInt(), anyInt(), any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenSizeIsGreaterThan100() {
+        assertThatThrownBy(() -> dishUseCase.getPaginatedByCategoryIdSortedByName(1, 101, Optional.empty()))
+                .isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page size must be less than or equal to 100");
+
+        verify(dishPersistencePort, never()).getPaginatedByCategoryIdSortedByName(anyInt(), anyInt(), any());
+    }
+
+    @Test
+    void shouldReturnPaginatedDishesWhenCategoryIdIsEmpty() {
+        Pagination<Dish> pagination = new Pagination<>();
+        Dish r1 = createDish(123D);
+        Dish r2 = createDish(123D);
+        r1.setName("Alpha");
+        r2.setName("Beta");
+        pagination.setItems(Arrays.asList(r1, r2));
+        pagination.setCurrentPageNumber(1);
+        pagination.setCurrentItemCount(2);
+        pagination.setTotalItems(2);
+        pagination.setTotalPages(1);
+        pagination.setPageSize(10);
+
+        when(dishPersistencePort.getPaginatedByCategoryIdSortedByName(1, 10, Optional.empty()))
+                .thenReturn(pagination);
+
+        Pagination<Dish> result = dishUseCase.getPaginatedByCategoryIdSortedByName(1, 10, Optional.empty());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getItems()).hasSize(2);
+        assertThat(result.getItems()).extracting(Dish::getName)
+                .containsExactly("Alpha", "Beta");
+
+        verify(dishPersistencePort).getPaginatedByCategoryIdSortedByName(1, 10, Optional.empty());
     }
 }
