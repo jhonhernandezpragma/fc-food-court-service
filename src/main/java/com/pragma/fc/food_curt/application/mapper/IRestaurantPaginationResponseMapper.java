@@ -1,6 +1,6 @@
 package com.pragma.fc.food_curt.application.mapper;
 
-import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemResponseDto;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -9,6 +9,6 @@ import org.mapstruct.ReportingPolicy;
         componentModel = "spring",
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = IRestaurantListItemMapper.class
+        uses = IRestaurantListItemResponseMapper.class
 )
-public interface IRestaurantPaginationMapper extends IPaginationResponseMapper<RestaurantListItemDto, Restaurant> { }
+public interface IRestaurantPaginationResponseMapper extends IPaginationResponseMapper<RestaurantListItemResponseDto, Restaurant> { }

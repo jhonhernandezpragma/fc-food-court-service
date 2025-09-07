@@ -2,7 +2,7 @@ package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateRestaurantRequestDto;
 import com.pragma.fc.food_curt.application.dto.response.PaginationResponseDto;
-import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.RestaurantResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.WorkerRestaurantResponseDto;
 import com.pragma.fc.food_curt.application.handler.IRestaurantHandler;
@@ -150,7 +150,7 @@ public class RestaurantController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Paginated list of restaurants retrieved successfully",
-                            content = @Content(schema = @Schema(implementation = RestaurantListItemDto.class))),
+                            content = @Content(schema = @Schema(implementation = RestaurantListItemResponseDto.class))),
                     @ApiResponse(
                             responseCode = "400",
                             description = """
@@ -166,11 +166,11 @@ public class RestaurantController {
     )
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<ApiSuccess<PaginationResponseDto<RestaurantListItemDto>>> getAllPaginatedAndSortedByName(
+    public ResponseEntity<ApiSuccess<PaginationResponseDto<RestaurantListItemResponseDto>>> getAllPaginatedAndSortedByName(
             @RequestParam @NotNull Integer page,
             @RequestParam @NotNull Integer size
     ) {
-        PaginationResponseDto<RestaurantListItemDto> response = restaurantHandler.getAllPaginatedAndSortedByName(page, size);
+        PaginationResponseDto<RestaurantListItemResponseDto> response = restaurantHandler.getAllPaginatedAndSortedByName(page, size);
         return ResponseEntity
                 .ok(new ApiSuccess<>(
                         "Paginated list of restaurants retrieved successfully",

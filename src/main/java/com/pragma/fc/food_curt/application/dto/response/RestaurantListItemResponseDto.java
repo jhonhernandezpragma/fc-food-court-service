@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RestaurantListItemDto {
+public class RestaurantListItemResponseDto {
     private String name;
     private String logoUrl;
 }
