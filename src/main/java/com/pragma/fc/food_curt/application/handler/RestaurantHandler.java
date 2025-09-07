@@ -2,11 +2,11 @@ package com.pragma.fc.food_curt.application.handler;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateRestaurantRequestDto;
 import com.pragma.fc.food_curt.application.dto.response.PaginationResponseDto;
-import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.RestaurantResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.WorkerRestaurantResponseDto;
 import com.pragma.fc.food_curt.application.mapper.ICreateRestaurantRequestMapper;
-import com.pragma.fc.food_curt.application.mapper.IRestaurantPaginationMapper;
+import com.pragma.fc.food_curt.application.mapper.IRestaurantPaginationResponseMapper;
 import com.pragma.fc.food_curt.application.mapper.IRestaurantResponseMapper;
 import com.pragma.fc.food_curt.application.mapper.IWorkerRestaurantResponseMapper;
 import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
@@ -30,7 +30,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     private final IRestaurantServicePort restaurantServicePort;
     private final IWorkerRestaurantResponseMapper workerRestaurantResponseMapper;
     private final ITokenServicePort tokenServicePort;
-    private final IRestaurantPaginationMapper restaurantPaginationMapper;
+    private final IRestaurantPaginationResponseMapper restaurantPaginationMapper;
 
     @Override
     public RestaurantResponseDto createRestaurant(CreateRestaurantRequestDto dto) {
@@ -69,7 +69,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public PaginationResponseDto<RestaurantListItemDto> getAllPaginatedAndSortedByName(int page, int size) {
+    public PaginationResponseDto<RestaurantListItemResponseDto> getAllPaginatedAndSortedByName(int page, int size) {
         Pagination<Restaurant> restaurantPagination = restaurantServicePort.getAllPaginatedAndSortedByName(page, size);
         return restaurantPaginationMapper.toDto(restaurantPagination);
     }
