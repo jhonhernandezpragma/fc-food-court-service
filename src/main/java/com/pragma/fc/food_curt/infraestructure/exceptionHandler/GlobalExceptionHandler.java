@@ -61,7 +61,6 @@ public class GlobalExceptionHandler {
         return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, message, request);
     }
 
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String message = String.format("Parameter '%s' must be of type %s",
@@ -81,8 +80,6 @@ public class GlobalExceptionHandler {
         if (ex instanceof AccessDeniedException || ex instanceof AuthenticationException) {
             throw ex;
         }
-
-        System.out.println("Error " + ex.getClass());
 
         return ErrorUtils.buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
