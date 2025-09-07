@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UpdateDishRequestDtoTest {
+class UpdateDishRequestDtoTest {
     @Test
     void shouldSerializeOnlyExpectedFields() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
