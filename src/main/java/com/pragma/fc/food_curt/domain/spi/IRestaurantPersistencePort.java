@@ -8,4 +8,5 @@ public interface IRestaurantPersistencePort {
     Long getRestaurantNitByOwner(Long ownerDocumentNumber);
     UseCaseRestaurantWorkerOutput assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber);
     Boolean existsWorkerByDocumentNumber(Long workerDocumentNumber);
+    Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber);
 }

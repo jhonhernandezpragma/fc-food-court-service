@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface IRestaurantRepository extends JpaRepository<RestaurantEntity, Long> {
     @Query("SELECT r.nit FROM RestaurantEntity r WHERE r.ownerDocumentNumber = :ownerDocumentNumber")
     Optional<Long> findNitByOwnerDocumentNumber(Long ownerDocumentNumber);
+    Boolean existsByNitAndOwnerDocumentNumber(Long restaurantNit, Long ownerDocumentNumber);
 }
