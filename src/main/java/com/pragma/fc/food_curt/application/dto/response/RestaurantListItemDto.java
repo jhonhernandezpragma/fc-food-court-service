@@ -5,11 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateRestaurantResponseDto {
-    private Long nit;
-    private Long ownerDocumentNumber;
+public class RestaurantListItemDto {
     private String name;
-    private String address;
-    private String phone;
     private String logoUrl;
 }

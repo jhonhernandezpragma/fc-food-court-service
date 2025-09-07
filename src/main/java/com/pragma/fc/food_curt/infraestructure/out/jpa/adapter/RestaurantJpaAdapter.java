@@ -1,5 +1,6 @@
 package com.pragma.fc.food_curt.infraestructure.out.jpa.adapter;
 
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IRestaurantPersistencePort;
 import com.pragma.fc.food_curt.domain.usecase.output.UseCaseRestaurantWorkerOutput;
@@ -12,6 +13,10 @@ import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantEntityM
 import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantWorkerEntityMapper;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IRestaurantRepository;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IRestaurantWorkerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
@@ -42,7 +47,6 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public Long getRestaurantNitByOwner(Long ownerDocumentNumber) {
         return restaurantRepository.findNitByOwnerDocumentNumber(ownerDocumentNumber)
                 .orElseThrow(() -> new OwnerRestaurantNotFoundException(ownerDocumentNumber));
-
     }
 
     @Override
@@ -62,5 +66,29 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber) {
         return restaurantRepository.existsByNitAndOwnerDocumentNumber(restaurantNit, ownerDocumentNumber);
+    }
+
+    @Override
+    public Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size) {
+        Sort sort = Sort.by("name");
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+
+        Page<RestaurantEntity> restaurantEntityPage = restaurantRepository.findAll(pageable);
+
+        Pagination<Restaurant> pagination = new Pagination();
+        pagination.setItems(restaurantEntityPage.getContent()
+                .stream()
+                .map(restaurantEntityMapper::toModel)
+                .toList()
+        );
+        pagination.setCurrentPageNumber(page);
+        pagination.setCurrentItemCount(restaurantEntityPage.getNumberOfElements());
+        pagination.setFirstPage(restaurantEntityPage.isFirst());
+        pagination.setLastPage(restaurantEntityPage.isLast());
+        pagination.setTotalItems(restaurantEntityPage.getTotalElements());
+        pagination.setTotalPages(restaurantEntityPage.getTotalPages());
+        pagination.setPageSize(size);
+
+        return pagination;
     }
 }

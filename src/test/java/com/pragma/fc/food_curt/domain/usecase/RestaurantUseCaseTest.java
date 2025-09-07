@@ -1,8 +1,10 @@
 package com.pragma.fc.food_curt.domain.usecase;
 
+import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OwnerNotFoundException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidNameException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidUserRoleException;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IRestaurantPersistencePort;
 import com.pragma.fc.food_curt.domain.spi.IUserClientPort;
@@ -13,9 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -142,4 +147,48 @@ class RestaurantUseCaseTest {
 
         verify(restaurantPersistencePort, never()).assignWorkerToRestaurant(anyLong(), anyLong());
     }
+
+    @Test
+    void shouldReturnPaginatedRestaurantsWhenParametersAreValid() {
+        Pagination<Restaurant> pagination = new Pagination<>();
+        Restaurant r1 = createRestaurant("Alpha");
+        Restaurant r2 = createRestaurant("Beta");
+        pagination.setItems(Arrays.asList(r1, r2));
+        pagination.setCurrentPageNumber(1);
+        pagination.setCurrentItemCount(2);
+        pagination.setTotalItems(2);
+        pagination.setTotalPages(1);
+        pagination.setPageSize(10);
+
+        when(restaurantPersistencePort.getAllPaginatedAndSortedByName(1, 10))
+                .thenReturn(pagination);
+
+        Pagination<Restaurant> result = restaurantUseCase.getAllPaginatedAndSortedByName(1, 10);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getItems()).hasSize(2);
+        assertThat(result.getItems()).extracting(Restaurant::getName)
+                .containsExactly("Alpha", "Beta");
+
+        verify(restaurantPersistencePort).getAllPaginatedAndSortedByName(1, 10);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenPageIsLessThanOne() {
+        assertThatThrownBy(() -> restaurantUseCase.getAllPaginatedAndSortedByName(0, 10))
+                .isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page must be greater than or equal to 1");
+
+        verify(restaurantPersistencePort, never()).getAllPaginatedAndSortedByName(anyInt(), anyInt());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenSizeIsGreaterThan100() {
+        assertThatThrownBy(() -> restaurantUseCase.getAllPaginatedAndSortedByName(1, 101))
+                .isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page size must be less than or equal to 100");
+
+        verify(restaurantPersistencePort, never()).getAllPaginatedAndSortedByName(anyInt(), anyInt());
+    }
+
 }

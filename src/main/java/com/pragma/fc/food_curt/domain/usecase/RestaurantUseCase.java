@@ -1,9 +1,11 @@
 package com.pragma.fc.food_curt.domain.usecase;
 
 import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
+import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OwnerNotFoundException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidNameException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidUserRoleException;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IRestaurantPersistencePort;
 import com.pragma.fc.food_curt.domain.spi.IUserClientPort;
@@ -54,5 +56,18 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     @Override
     public Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber) {
         return restaurantPersistencePort.existsRestaurantByOwner(restaurantNit, ownerDocumentNumber);
+    }
+
+    @Override
+    public Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size) {
+        if(page < 1) {
+            throw new InvalidPaginationParameterException("Page must be greater than or equal to 1");
+        }
+
+        if(size > 100) {
+            throw new InvalidPaginationParameterException("Page size must be less than or equal to 100");
+        }
+
+        return restaurantPersistencePort.getAllPaginatedAndSortedByName(page, size);
     }
 }
