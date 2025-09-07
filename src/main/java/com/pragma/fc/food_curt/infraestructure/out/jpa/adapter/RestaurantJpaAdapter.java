@@ -58,4 +58,9 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public Boolean existsWorkerByDocumentNumber(Long workerDocumentNumber) {
         return restaurantWorkerRepository.existsById(workerDocumentNumber);
     }
+
+    @Override
+    public Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber) {
+        return restaurantRepository.existsByNitAndOwnerDocumentNumber(restaurantNit, ownerDocumentNumber);
+    }
 }

@@ -7,4 +7,5 @@ public interface IRestaurantServicePort {
     Restaurant createRestaurant(Restaurant restaurant);
     Long getRestaurantNitByOwner(Long ownerDocumentNumber);
     UseCaseRestaurantWorkerOutput assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber, Long ownerDocument);
+    Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber);
 }

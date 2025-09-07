@@ -50,4 +50,9 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
         return restaurantPersistencePort.assignWorkerToRestaurant(restaurantNit, userDocumentNumber);
     }
+
+    @Override
+    public Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber) {
+        return restaurantPersistencePort.existsRestaurantByOwner(restaurantNit, ownerDocumentNumber);
+    }
 }
