@@ -2,7 +2,6 @@ package com.pragma.fc.food_curt.infraestructure.configuration;
 
 import com.pragma.fc.food_curt.infraestructure.exceptionHandler.ErrorUtils;
 import com.pragma.fc.food_curt.infraestructure.input.security.filter.JwtAuthenticationFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

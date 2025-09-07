@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ITokenServicePort tokenServicePort;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -53,16 +51,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String userEmail = tokenServicePort.extractSubject(token);
+        String documentNumberStr = tokenServicePort.extractSubject(token);
         String role = tokenServicePort.extractRole(token);
-        if (userEmail == null || role == null) {
+        if (documentNumberStr == null || role == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         GrantedAuthority authorities = new SimpleGrantedAuthority("ROLE_" + role);
         Authentication authentication = new JwtAuthenticationToken(
-                userEmail,
+                documentNumberStr,
                 List.of(authorities),
                 token
         );
