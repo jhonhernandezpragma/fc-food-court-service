@@ -3,6 +3,7 @@ package com.pragma.fc.food_curt.infraestructure.exceptionHandler;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -11,9 +12,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
@@ -47,11 +50,39 @@ public class GlobalExceptionHandler {
         return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, message, request);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
+        String message = ex.getConstraintViolations()
+                .stream()
+                .map(err -> err.getPropertyPath() + " " + err.getMessage())
+                .findFirst()
+                .orElse("Validation error");
+
+        return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, message, request);
+    }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        String message = String.format("Parameter '%s' must be of type %s",
+                ex.getName(),
+                ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
+        return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, message, request);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiError> handleMissingParams(MissingServletRequestParameterException ex, WebRequest request) {
+        String message = "Parameter '" + ex.getParameterName() + "' is required";
+        return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, message, request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleError(Exception ex, WebRequest request) throws Exception {
         if (ex instanceof AccessDeniedException || ex instanceof AuthenticationException) {
             throw ex;
         }
+
+        System.out.println("Error " + ex.getClass());
 
         return ErrorUtils.buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
