@@ -29,13 +29,8 @@ public class RestaurantHandler implements IRestaurantHandler {
 
     @Override
     public CreateRestaurantResponseDto createRestaurant(CreateRestaurantRequestDto dto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = null;
-
-        if(authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) { token = jwtAuthenticationToken.getToken(); }
-
         Restaurant restaurant = createRestaurantRequestMapper.toModel(dto);
-        Restaurant newRestaurant = restaurantServicePort.createRestaurant(restaurant, token);
+        Restaurant newRestaurant = restaurantServicePort.createRestaurant(restaurant);
         return createRestaurantResponseMapper.toDto(newRestaurant);
     }
 
