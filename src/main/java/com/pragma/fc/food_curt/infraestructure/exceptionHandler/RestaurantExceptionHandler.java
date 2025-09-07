@@ -2,6 +2,7 @@ package com.pragma.fc.food_curt.infraestructure.exceptionHandler;
 
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidNameException;
 import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidUserRoleException;
+import com.pragma.fc.food_curt.infraestructure.exception.OwnerRestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantAlreadyExistsException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
@@ -34,6 +35,11 @@ public class RestaurantExceptionHandler {
 
     @ExceptionHandler(RestaurantNotFoundException.class)
     public ResponseEntity<ApiError> handleRestaurantNotFound(RestaurantNotFoundException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OwnerRestaurantNotFoundException.class)
+    public ResponseEntity<ApiError> handleOwnerRestaurantNotFound(OwnerRestaurantNotFoundException ex, WebRequest request) {
         return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 }

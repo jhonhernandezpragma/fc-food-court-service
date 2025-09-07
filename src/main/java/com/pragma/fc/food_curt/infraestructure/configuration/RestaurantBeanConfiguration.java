@@ -8,7 +8,9 @@ import com.pragma.fc.food_curt.infraestructure.out.feign.adapter.UserFeignAdapte
 import com.pragma.fc.food_curt.infraestructure.out.feign.client.IUserClientFeign;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.adapter.RestaurantJpaAdapter;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantEntityMapper;
+import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantWorkerEntityMapper;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IRestaurantRepository;
+import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IRestaurantWorkerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class RestaurantBeanConfiguration {
     private final IRestaurantRepository restaurantRepository;
+    private final IRestaurantWorkerRepository restaurantWorkerRepository;
+    private final IRestaurantWorkerEntityMapper restaurantWorkerEntityMapper;
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final IUserClientFeign userClientFeign;
 
@@ -27,7 +31,7 @@ public class RestaurantBeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
-        return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper);
+        return new RestaurantJpaAdapter(restaurantRepository, restaurantWorkerRepository, restaurantWorkerEntityMapper, restaurantEntityMapper);
     }
 
    @Bean
