@@ -91,4 +91,32 @@ public class DishController {
                         response
                 ));
     }
+
+    @Operation(
+            summary = "Update dish status",
+            description = "Requires role OWNER",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Dish status updated",
+                            content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = " Invalid request payload (validation error)",
+                            content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Dish not found",
+                            content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden: requires role OWNER",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @PreAuthorize("hasRole('OWNER')")
+    @PutMapping("/{id}/activation")
+    public ResponseEntity<ApiSuccess<DishResponseDto>> enabledDisabledDish(@RequestBody @Valid UpdateDishStatusRequestDto dto, @PathVariable Integer id) {
+        DishResponseDto response = dishHandler.updateDishStatus(id, dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiSuccess<>(
+                        "Dish status updated successfully",
+                        response
+                ));
+    }
 }
