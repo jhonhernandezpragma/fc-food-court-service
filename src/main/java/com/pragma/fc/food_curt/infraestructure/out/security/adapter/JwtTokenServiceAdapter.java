@@ -2,7 +2,6 @@ package com.pragma.fc.food_curt.infraestructure.out.security.adapter;
 
 import com.pragma.fc.food_curt.domain.spi.ITokenServicePort;
 import com.pragma.fc.food_curt.infraestructure.out.security.entity.TokenType;
-import com.pragma.fc.food_curt.infraestructure.out.security.property.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
