@@ -1,7 +1,9 @@
 package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateRestaurantRequestDto;
-import com.pragma.fc.food_curt.application.dto.response.CreateRestaurantResponseDto;
+import com.pragma.fc.food_curt.application.dto.response.PaginationResponseDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.WorkerRestaurantResponseDto;
 import com.pragma.fc.food_curt.application.handler.IRestaurantHandler;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
@@ -35,7 +37,7 @@ public class RestaurantController {
             description = "Requires role ADMIN",
             responses = {
             @ApiResponse(responseCode = "201", description = "Restaurant created",
-                    content = @Content(contentSchema = @Schema(implementation = CreateRestaurantResponseDto.class))),
+                    content = @Content(contentSchema = @Schema(implementation = RestaurantResponseDto.class))),
                 @ApiResponse(responseCode = "404", description = """
                         1. Invalid restaurant name
                         2. Restaurant already exists
@@ -50,8 +52,8 @@ public class RestaurantController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<ApiSuccess<CreateRestaurantResponseDto>> createRestaurant(@RequestBody @Valid CreateRestaurantRequestDto dto) {
-        CreateRestaurantResponseDto response = restaurantHandler.createRestaurant(dto);
+    public ResponseEntity<ApiSuccess<RestaurantResponseDto>> createRestaurant(@RequestBody @Valid CreateRestaurantRequestDto dto) {
+        RestaurantResponseDto response = restaurantHandler.createRestaurant(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiSuccess<>(
@@ -67,7 +69,7 @@ public class RestaurantController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Restaurant NIT retrieved successfully",
-                            content = @Content(schema = @Schema(implementation = ApiSuccess.class))),
+                            content = @Content(schema = @Schema(implementation = Long.class))),
                     @ApiResponse(
                             responseCode = "404",
                             description = "No restaurant found for the given owner",
@@ -101,7 +103,7 @@ public class RestaurantController {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Worker assigned to restaurant successfully",
-                            content = @Content(schema = @Schema(implementation = ApiSuccess.class))
+                            content = @Content(schema = @Schema(implementation = WorkerRestaurantResponseDto.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
