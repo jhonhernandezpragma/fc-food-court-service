@@ -1,6 +1,6 @@
 package com.pragma.fc.food_curt.application.mapper;
 
-import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemDto;
+import com.pragma.fc.food_curt.application.dto.response.RestaurantListItemResponseDto;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -10,6 +10,6 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface IRestaurantListItemMapper {
-    RestaurantListItemDto toDto(Restaurant restaurant);
+public interface IRestaurantListItemResponseMapper {
+    RestaurantListItemResponseDto toDto(Restaurant restaurant);
 }
