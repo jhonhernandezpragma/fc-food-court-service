@@ -10,3 +10,12 @@ VALUES
   ('Vegetariano'),
   ('Postres'),
   ('Bebidas');
+
+
+INSERT INTO public.order_status (name)
+VALUES
+    ('PENDING'),
+    ('IN_PREPARATION'),
+    ('CANCELED'),
+    ('READY'),
+    ('DELIVERED');
