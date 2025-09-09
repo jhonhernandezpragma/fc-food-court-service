@@ -9,6 +9,7 @@ import com.pragma.fc.food_curt.domain.model.Dish;
 import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DishUseCase implements IDishServicePort {
@@ -22,7 +23,7 @@ public class DishUseCase implements IDishServicePort {
 
     @Override
     public Dish createDish(Dish dish, Long ownerDocumentNumber) {
-        if(!isMyRestaurant(dish.getRestaurant().getNit(), ownerDocumentNumber)) {
+        if (!isMyRestaurant(dish.getRestaurant().getNit(), ownerDocumentNumber)) {
             throw new OwnerNotAuthorizedForRestaurantException();
         }
 
@@ -33,7 +34,7 @@ public class DishUseCase implements IDishServicePort {
 
     @Override
     public Dish updateDish(Integer id, Double price, String description, Long ownerDocumentNumber) {
-        if(!isMyDish(id, ownerDocumentNumber)) {
+        if (!isMyDish(id, ownerDocumentNumber)) {
             throw new OwnerNotAuthorizedForRestaurantException();
         }
 
@@ -43,28 +44,43 @@ public class DishUseCase implements IDishServicePort {
 
     @Override
     public Dish updateDishStatus(Integer id, Boolean isActive, Long ownerDocumentNumber) {
-        if(!isMyDish(id, ownerDocumentNumber)) {
+        if (!isMyDish(id, ownerDocumentNumber)) {
             throw new OwnerNotAuthorizedForRestaurantException();
         }
 
-        return dishPersistencePort.updateDishStatus(id,isActive);
+        return dishPersistencePort.updateDishStatus(id, isActive);
     }
 
     @Override
     public Pagination<Dish> getPaginatedByCategoryIdSortedByName(int page, int size, Optional<Integer> categoryId) {
-        if(page < 1) {
+        if (page < 1) {
             throw new InvalidPaginationParameterException("Page must be greater than or equal to 1");
         }
 
-        if(size > 100) {
+        if (size > 100) {
             throw new InvalidPaginationParameterException("Page size must be less than or equal to 100");
         }
 
         return dishPersistencePort.getPaginatedByCategoryIdSortedByName(page, size, categoryId);
     }
 
+    @Override
+    public boolean allBelongToSameRestaurant(List<Integer> ids) {
+        return dishPersistencePort.allBelongToSameRestaurant(ids);
+    }
+
+    @Override
+    public List<Dish> getAllByIds(List<Integer> ids) {
+        return dishPersistencePort.getAllByIds(ids);
+    }
+
+    @Override
+    public boolean belongToRestaurant(Integer dishId, Long restaurantNit) {
+        return dishPersistencePort.belongToRestaurant(dishId, restaurantNit);
+    }
+
     private void validatePrice(Double price) {
-        if(price <= 0) {
+        if (price <= 0) {
             throw new DishNonPositivePriceException(price);
         }
     }
