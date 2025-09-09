@@ -6,6 +6,7 @@ import java.util.List;
 public class Order {
     private Integer orderId;
     private Long customerDocumentNumber;
+    private Long workerDocumentNumber;
     private Restaurant restaurant;
     private OrderStatus status;
     private LocalDateTime createdAt;
@@ -14,9 +15,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(Integer orderId, Long customerDocumentNumber, Restaurant restaurant, OrderStatus status, LocalDateTime createdAt, List<OrderItem> items) {
+    public Order(Integer orderId, Long customerDocumentNumber, Long workerDocumentNumber, Restaurant restaurant, OrderStatus status, LocalDateTime createdAt, List<OrderItem> items) {
         this.orderId = orderId;
         this.customerDocumentNumber = customerDocumentNumber;
+        this.workerDocumentNumber = workerDocumentNumber;
         this.restaurant = restaurant;
         this.status = status;
         this.createdAt = createdAt;
@@ -69,6 +71,14 @@ public class Order {
 
     public void setCustomerDocumentNumber(Long customerDocumentNumber) {
         this.customerDocumentNumber = customerDocumentNumber;
+    }
+
+    public Long getWorkerDocumentNumber() {
+        return workerDocumentNumber;
+    }
+
+    public void setWorkerDocumentNumber(Long workerDocumentNumber) {
+        this.workerDocumentNumber = workerDocumentNumber;
     }
 
     public double getTotal() {

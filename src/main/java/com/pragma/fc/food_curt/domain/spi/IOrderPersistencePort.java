@@ -11,4 +11,8 @@ public interface IOrderPersistencePort {
     boolean existsByCustomerDocumentNumber(Long customerDocumentNumber);
 
     Pagination<Order> getPaginatedByStatusSortedByDate(int page, int size, Optional<Integer> orderStatusId, Long restaurantNit);
+
+    Order getById(Integer orderId);
+
+    Order updateOrder(Order order);
 }

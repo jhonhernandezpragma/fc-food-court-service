@@ -6,7 +6,10 @@ import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.exception.ActiveOrderAlreadyExistsException;
 import com.pragma.fc.food_curt.domain.exception.DishesFromDifferentRestaurantsException;
 import com.pragma.fc.food_curt.domain.exception.DuplicateDishIdException;
+import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentException;
 import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
+import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
+import com.pragma.fc.food_curt.domain.exception.WorkerRestaurantMismatchException;
 import com.pragma.fc.food_curt.domain.model.Order;
 import com.pragma.fc.food_curt.domain.model.OrderStatus;
 import com.pragma.fc.food_curt.domain.model.Pagination;
@@ -73,4 +76,31 @@ public class OrderUseCase implements IOrderServicePort {
 
         return orderPersistencePort.getPaginatedByStatusSortedByDate(page, size, orderStatusId, restaurantNit);
     }
+
+    @Override
+    public Order assignWorkerToOrder(Integer orderId, Long workerDocumentNumber) {
+        Long myRestaurantNit = restaurantServicePort.getRestaurantNitByWorker(workerDocumentNumber);
+        Order order = orderPersistencePort.getById(orderId);
+
+        if (myRestaurantNit == null
+                || order.getRestaurant().getNit() == null
+                || !myRestaurantNit.equals(order.getRestaurant().getNit())
+        ) {
+            throw new WorkerRestaurantMismatchException(orderId, workerDocumentNumber);
+        }
+
+        if (order.getWorkerDocumentNumber() != null) {
+            throw new OrderAlreadyAssignedException(orderId, order.getWorkerDocumentNumber());
+        }
+
+        if (!order.getStatus().equals(OrderStatus.PENDING)) {
+            throw new InvalidOrderStatusForAssignmentException(orderId, order.getStatus().name());
+        }
+
+        order.setStatus(OrderStatus.IN_PREPARATION);
+        order.setWorkerDocumentNumber(workerDocumentNumber);
+
+        return orderPersistencePort.updateOrder(order);
+    }
+
 }
