@@ -44,6 +44,13 @@ public class OrderHandler implements IOrderHandler {
         return paginationResponseMapper.toDto(orderPagination);
     }
 
+    @Override
+    public OrderResponseDto assignWorkerToOrder(Integer orderId) {
+        Long workerDocumentNumber = extractDocumentNumber();
+        Order updatedOrder = orderServicePort.assignWorkerToOrder(orderId, workerDocumentNumber);
+        return orderResponseMapper.toDto(updatedOrder);
+    }
+
     private Long extractDocumentNumber() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long documentNumber = null;
