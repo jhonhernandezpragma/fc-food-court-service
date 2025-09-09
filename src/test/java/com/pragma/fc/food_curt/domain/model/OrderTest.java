@@ -16,8 +16,8 @@ class OrderTest {
         Dish dish1 = new Dish(1, null, restaurant, "Dish1", "Desc1", 10000.0, "url1", true);
         Dish dish2 = new Dish(2, null, restaurant, "Dish2", "Desc2", 5000.0, "url2", true);
 
-        OrderItem item1 = new OrderItem(dish1, 2);
-        OrderItem item2 = new OrderItem(dish2, 3);
+        OrderItem item1 = new OrderItem(dish1, 2, 123.2d);
+        OrderItem item2 = new OrderItem(dish2, 3, 123.2d);
 
         LocalDateTime now = LocalDateTime.now();
 
