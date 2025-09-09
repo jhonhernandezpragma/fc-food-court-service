@@ -39,6 +39,12 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
+    public Long getRestaurantNitByWorker(Long workerDocumentNumber) {
+        return restaurantPersistencePort.getRestaurantNitByWorker(workerDocumentNumber);
+    }
+
+
+    @Override
     public UseCaseRestaurantWorkerOutput assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber, Long ownerDocumentNumber) {
         Long ownerRestaurantNit = getRestaurantNitByOwner(ownerDocumentNumber);
         if (ownerRestaurantNit == null || !ownerRestaurantNit.equals(restaurantNit)) {
