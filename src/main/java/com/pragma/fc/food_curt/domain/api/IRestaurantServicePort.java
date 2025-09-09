@@ -14,4 +14,6 @@ public interface IRestaurantServicePort {
     Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber);
 
     Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size);
+
+    Long getRestaurantNitByWorker(Long workerDocumentNumber);
 }

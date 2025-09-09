@@ -7,6 +7,7 @@ import com.pragma.fc.food_curt.domain.usecase.output.UseCaseRestaurantWorkerOutp
 import com.pragma.fc.food_curt.infraestructure.exception.OwnerRestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantAlreadyExistsException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantNotFoundException;
+import com.pragma.fc.food_curt.infraestructure.exception.WorkerRestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.RestaurantEntity;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.RestaurantWorkerEntity;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantEntityMapper;
@@ -90,5 +91,12 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
         pagination.setPageSize(size);
 
         return pagination;
+    }
+
+    @Override
+    public Long getRestaurantNitByWorker(Long workerDocumentNumber) {
+        return restaurantWorkerRepository.findRestaurantByWorkerDocumentNumber(workerDocumentNumber)
+                .map(item -> item.getRestaurant().getNit())
+                .orElseThrow(() -> new WorkerRestaurantNotFoundException(workerDocumentNumber));
     }
 }

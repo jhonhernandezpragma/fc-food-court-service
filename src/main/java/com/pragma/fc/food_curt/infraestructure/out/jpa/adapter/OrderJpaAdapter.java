@@ -3,6 +3,7 @@ package com.pragma.fc.food_curt.infraestructure.out.jpa.adapter;
 import com.pragma.fc.food_curt.domain.api.IDishServicePort;
 import com.pragma.fc.food_curt.domain.model.Order;
 import com.pragma.fc.food_curt.domain.model.OrderItem;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.spi.IOrderPersistencePort;
 import com.pragma.fc.food_curt.infraestructure.exception.DishNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderStatusNotFoundException;
@@ -14,9 +15,14 @@ import com.pragma.fc.food_curt.infraestructure.out.jpa.mapper.IRestaurantEntityM
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IOrderRepository;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.repository.IOrderStatusRepository;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrderJpaAdapter implements IOrderPersistencePort {
@@ -27,6 +33,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final IOrderStatusRepository orderStatusRepository;
     private final EntityManager entityManager;
+
 
     public OrderJpaAdapter(
             IOrderRepository orderRepository,
@@ -85,5 +92,31 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     @Override
     public boolean existsByCustomerDocumentNumber(Long customerDocumentNumber) {
         return orderRepository.existsByCustomerDocumentNumber(customerDocumentNumber);
+    }
+
+    @Override
+    public Pagination<Order> getPaginatedByStatusSortedByDate(int page, int size, Optional<Integer> orderStatusId, Long restaurantNit) {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        Page<OrderEntity> orderEntityPage = orderStatusId
+                .map(statusId -> orderRepository.findByStatusIdAndRestaurantNit(statusId, restaurantNit, pageable))
+                .orElseGet(() -> orderRepository.findAllByRestaurantNit(restaurantNit, pageable));
+
+        Pagination<Order> pagination = new Pagination();
+        pagination.setItems(orderEntityPage
+                .stream()
+                .map(entity -> orderEntityMapper.toModel(entity, dishEntityMapper, restaurantEntityMapper))
+                .toList());
+
+        pagination.setPageSize(size);
+        pagination.setTotalItems(orderEntityPage.getTotalElements());
+        pagination.setTotalPages(orderEntityPage.getTotalPages());
+
+        pagination.setCurrentItemCount(orderEntityPage.getNumberOfElements());
+        pagination.setFirstPage(orderEntityPage.isFirst());
+        pagination.setLastPage(orderEntityPage.isLast());
+
+        return pagination;
     }
 }

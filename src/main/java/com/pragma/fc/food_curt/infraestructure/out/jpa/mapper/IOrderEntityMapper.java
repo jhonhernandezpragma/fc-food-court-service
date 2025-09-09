@@ -50,12 +50,15 @@ public interface IOrderEntityMapper {
         Order order = new Order();
         order.setOrderId(entity.getOrderId());
         order.setRestaurant(restaurantMapper.toModel(entity.getRestaurant()));
+        order.setStatus(OrderStatus.valueOf(entity.getStatus().getName()));
+        order.setCustomerDocumentNumber(order.getCustomerDocumentNumber());
 
         if (entity.getOrderDishes() != null) {
             List<OrderItem> items = entity.getOrderDishes().stream()
                     .map(od -> {
                         OrderItem item = new OrderItem();
                         item.setDish(dishMapper.toModel(od.getDish()));
+                        item.setPrice(od.getPrice());
                         item.setQuantity(od.getQuantity());
                         return item;
                     })
@@ -64,7 +67,6 @@ public interface IOrderEntityMapper {
         }
 
         order.setCreatedAt(entity.getCreatedAt());
-        order.setStatus(OrderStatus.valueOf(entity.getStatus().getName()));
         return order;
     }
 }

@@ -1,7 +1,8 @@
 package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateOrderRequestDto;
-import com.pragma.fc.food_curt.application.dto.response.CreateOrderResponseDto;
+import com.pragma.fc.food_curt.application.dto.response.OrderResponseDto;
+import com.pragma.fc.food_curt.application.dto.response.PaginationResponseDto;
 import com.pragma.fc.food_curt.application.handler.IOrderHandler;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiSuccess;
@@ -10,16 +11,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${app.api.prefix}/orders")
+@Validated
 public class OrderController {
     private final IOrderHandler orderHandler;
 
@@ -32,7 +40,7 @@ public class OrderController {
             description = "Requires CUSTOMER role",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Order created successfully",
-                            content = @Content(contentSchema = @Schema(implementation = CreateOrderResponseDto.class))),
+                            content = @Content(contentSchema = @Schema(implementation = OrderResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = """
                             1. Invalid input
                             2. Dishes should belong to same restaurant
@@ -49,12 +57,52 @@ public class OrderController {
     )
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
-    public ResponseEntity<ApiSuccess<CreateOrderResponseDto>> createOrder(@RequestBody @Valid CreateOrderRequestDto dto) {
-        CreateOrderResponseDto response = orderHandler.createOrder(dto);
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> createOrder(@RequestBody @Valid CreateOrderRequestDto dto) {
+        OrderResponseDto response = orderHandler.createOrder(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiSuccess<>(
                         "Order created successfully",
+                        response
+                ));
+    }
+
+    @Operation(
+            summary = "Get all orders sorted by name",
+            description = "Returns a paginated list of orders sorted by name. Requires authentication.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Paginated list of dishes retrieved successfully",
+                            content = @Content(schema = @Schema(implementation = OrderResponseDto.class))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = """
+                                    1. Parameter 'page' < 1
+                                    2. Parameter 'size' > 100
+                                    """,
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden: requires role WORKER",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+            }
+    )
+    @PreAuthorize("hasRole('WORKER')")
+    @GetMapping
+    public ResponseEntity<ApiSuccess<PaginationResponseDto<OrderResponseDto>>> getAllByStatusAndPaginated(
+            @RequestParam @NotNull Integer page,
+            @RequestParam @NotNull Integer size,
+            @RequestParam(required = false) Integer orderStatusId
+    ) {
+        PaginationResponseDto<OrderResponseDto> response = orderHandler.getPaginatedByStatusSortedByDate(page, size, Optional.ofNullable(orderStatusId));
+        return ResponseEntity
+                .ok(new ApiSuccess<>(
+                        "Paginated list of orders retrieved successfully",
                         response
                 ));
     }

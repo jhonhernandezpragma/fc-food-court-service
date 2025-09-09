@@ -14,7 +14,7 @@ import lombok.Data;
 public class OrderStatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer statusId;
+    private Integer id;
 
     @Column(unique = true, nullable = false)
     private String name;

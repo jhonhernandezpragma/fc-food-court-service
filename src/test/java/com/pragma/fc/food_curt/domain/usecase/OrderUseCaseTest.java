@@ -1,14 +1,17 @@
 package com.pragma.fc.food_curt.domain.usecase;
 
 import com.pragma.fc.food_curt.domain.api.IDishServicePort;
+import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.exception.ActiveOrderAlreadyExistsException;
 import com.pragma.fc.food_curt.domain.exception.DishesFromDifferentRestaurantsException;
 import com.pragma.fc.food_curt.domain.exception.DuplicateDishIdException;
+import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.model.Dish;
 import com.pragma.fc.food_curt.domain.model.DishCategory;
 import com.pragma.fc.food_curt.domain.model.Order;
 import com.pragma.fc.food_curt.domain.model.OrderItem;
 import com.pragma.fc.food_curt.domain.model.OrderStatus;
+import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IOrderPersistencePort;
 import com.pragma.fc.food_curt.infraestructure.exception.InvalidRestaurantOrderException;
@@ -21,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +46,9 @@ class OrderUseCaseTest {
 
     @Mock
     IOrderPersistencePort orderPersistencePort;
+
+    @Mock
+    IRestaurantServicePort restaurantServicePort;
 
     private Restaurant createRestaurant() {
         return new Restaurant(
@@ -293,5 +301,98 @@ class OrderUseCaseTest {
         assertThat(result.getItems().get(0).getQuantity()).isEqualTo(5);
 
         verify(orderPersistencePort).createOrder(any(Order.class));
+    }
+
+
+    @Test
+    void shouldThrowExceptionWhenPageIsLessThanOne() {
+        assertThatThrownBy(() ->
+                orderUseCase.getPaginatedByStatusSortedByDate(0, 10, Optional.empty(), 123L)
+        ).isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page must be greater than or equal to 1");
+
+        verifyNoInteractions(orderPersistencePort);
+        verifyNoInteractions(restaurantServicePort);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenSizeGreaterThan100() {
+        assertThatThrownBy(() ->
+                orderUseCase.getPaginatedByStatusSortedByDate(1, 101, Optional.empty(), 123L)
+        ).isInstanceOf(InvalidPaginationParameterException.class)
+                .hasMessageContaining("Page size must be less than or equal to 100");
+
+        verifyNoInteractions(orderPersistencePort);
+        verifyNoInteractions(restaurantServicePort);
+    }
+
+    @Test
+    void shouldReturnPaginatedOrdersSuccessfully() {
+        int page = 1;
+        int size = 10;
+        Long workerDocumentNumber = 123L;
+        Long restaurantNit = 456L;
+        Optional<Integer> orderStatusId = Optional.of(OrderStatus.PENDING.ordinal());
+
+        Order order = createOrder(List.of(createOrderItem(1, "Burger", 15.0, 1)));
+        Pagination<Order> expectedPagination = new Pagination<>(
+                List.of(order),
+                page,
+                1,
+                true,
+                true,
+                1,
+                1L,
+                size
+        );
+
+        when(restaurantServicePort.getRestaurantNitByWorker(workerDocumentNumber)).thenReturn(restaurantNit);
+        when(orderPersistencePort.getPaginatedByStatusSortedByDate(page, size, orderStatusId, restaurantNit))
+                .thenReturn(expectedPagination);
+
+        Pagination<Order> result = orderUseCase.getPaginatedByStatusSortedByDate(page, size, orderStatusId, workerDocumentNumber);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getItems()).hasSize(1);
+        assertThat(result.getItems().get(0).getItems()).hasSize(1);
+        assertThat(result.getCurrentPageNumber()).isEqualTo(page);
+        assertThat(result.getPageSize()).isEqualTo(size);
+        assertThat(result.getTotalItems()).isEqualTo(1);
+
+        verify(restaurantServicePort).getRestaurantNitByWorker(workerDocumentNumber);
+        verify(orderPersistencePort).getPaginatedByStatusSortedByDate(page, size, orderStatusId, restaurantNit);
+    }
+
+    @Test
+    void shouldWorkWithEmptyOrderStatusId() {
+        int page = 1;
+        int size = 5;
+        Long workerDocumentNumber = 123L;
+        Long restaurantNit = 456L;
+
+        Pagination<Order> expectedPagination = new Pagination<>(
+                List.of(),
+                page,
+                0,
+                true,
+                true,
+                0,
+                0L,
+                size
+        );
+
+        when(restaurantServicePort.getRestaurantNitByWorker(workerDocumentNumber)).thenReturn(restaurantNit);
+        when(orderPersistencePort.getPaginatedByStatusSortedByDate(page, size, Optional.empty(), restaurantNit))
+                .thenReturn(expectedPagination);
+
+        Pagination<Order> result = orderUseCase.getPaginatedByStatusSortedByDate(page, size, Optional.empty(), workerDocumentNumber);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getItems()).isEmpty();
+        assertThat(result.getCurrentPageNumber()).isEqualTo(page);
+        assertThat(result.getTotalItems()).isEqualTo(0);
+
+        verify(restaurantServicePort).getRestaurantNitByWorker(workerDocumentNumber);
+        verify(orderPersistencePort).getPaginatedByStatusSortedByDate(page, size, Optional.empty(), restaurantNit);
     }
 }

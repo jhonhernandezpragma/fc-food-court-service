@@ -19,10 +19,11 @@ class OrderItemTest {
                 true
         );
 
-        OrderItem item = new OrderItem(dish, 3);
+        OrderItem item = new OrderItem(dish, 3, 123.2d);
 
         assertThat(item.getDish()).isEqualTo(dish);
         assertThat(item.getQuantity()).isEqualTo(3);
+        assertThat(item.getPrice()).isEqualTo(123.2d);
     }
 
     @Test
@@ -35,8 +36,10 @@ class OrderItemTest {
         OrderItem item = new OrderItem();
         item.setDish(dish);
         item.setQuantity(2);
+        item.setPrice(123.2d);
 
         assertThat(item.getDish().getName()).isEqualTo("Dish name");
         assertThat(item.getQuantity()).isEqualTo(2);
+        assertThat(item.getPrice()).isEqualTo(123.2d);
     }
 }
