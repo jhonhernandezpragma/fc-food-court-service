@@ -11,4 +11,5 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = IRestaurantListItemResponseMapper.class
 )
-public interface IRestaurantPaginationResponseMapper extends IPaginationResponseMapper<RestaurantListItemResponseDto, Restaurant> { }
+public interface IRestaurantPaginationResponseMapper extends IPaginationResponseMapper<RestaurantListItemResponseDto, Restaurant> {
+}

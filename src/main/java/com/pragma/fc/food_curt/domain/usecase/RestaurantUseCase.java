@@ -22,11 +22,11 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public Restaurant createRestaurant(Restaurant restaurant) {
-        if(restaurant.getName().matches("\\d+")) {
+        if (restaurant.getName().matches("\\d+")) {
             throw new RestaurantInvalidNameException(restaurant.getName());
         }
 
-        if(!userClientPort.isOwner(restaurant.getOwnerDocumentNumber())) {
+        if (!userClientPort.isOwner(restaurant.getOwnerDocumentNumber())) {
             throw new RestaurantInvalidUserRoleException(restaurant.getOwnerDocumentNumber());
         }
 
@@ -41,7 +41,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     @Override
     public UseCaseRestaurantWorkerOutput assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber, Long ownerDocumentNumber) {
         Long ownerRestaurantNit = getRestaurantNitByOwner(ownerDocumentNumber);
-        if (ownerRestaurantNit == null || !ownerRestaurantNit.equals(restaurantNit) ) {
+        if (ownerRestaurantNit == null || !ownerRestaurantNit.equals(restaurantNit)) {
             throw new OwnerNotFoundException("Owner with document " + ownerDocumentNumber + " is not associated with any restaurant");
         }
 
@@ -60,11 +60,11 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size) {
-        if(page < 1) {
+        if (page < 1) {
             throw new InvalidPaginationParameterException("Page must be greater than or equal to 1");
         }
 
-        if(size > 100) {
+        if (size > 100) {
             throw new InvalidPaginationParameterException("Page size must be less than or equal to 100");
         }
 

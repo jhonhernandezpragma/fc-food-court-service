@@ -35,7 +35,7 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public Restaurant createRestaurant(Restaurant restaurant) {
         RestaurantEntity restaurantEntity = restaurantEntityMapper.toEntity(restaurant);
 
-        if(restaurantRepository.existsById(restaurant.getNit())) {
+        if (restaurantRepository.existsById(restaurant.getNit())) {
             throw new RestaurantAlreadyExistsException();
         }
 
@@ -71,7 +71,7 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size) {
         Sort sort = Sort.by("name");
-        Pageable pageable = PageRequest.of(page-1, size, sort);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
 
         Page<RestaurantEntity> restaurantEntityPage = restaurantRepository.findAll(pageable);
 

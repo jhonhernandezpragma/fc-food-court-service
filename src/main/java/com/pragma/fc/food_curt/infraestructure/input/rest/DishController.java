@@ -46,13 +46,13 @@ public class DishController {
                     @ApiResponse(responseCode = "201", description = "Dish created",
                             content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = """
-                        1. Dish price must be greater than zero
-                        2. Invalid request payload (validation error)
-                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                            1. Dish price must be greater than zero
+                            2. Invalid request payload (validation error)
+                            """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = """
-                        1. Dish category not found
-                        2. Restaurant not found
-                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                            1. Dish category not found
+                            2. Restaurant not found
+                            """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "403", description = "Forbidden: requires role OWNER",
@@ -78,9 +78,9 @@ public class DishController {
                     @ApiResponse(responseCode = "200", description = "Dish updated",
                             content = @Content(contentSchema = @Schema(implementation = DishResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = """
-                        1. Dish price must be greater than zero
-                        2. Invalid request payload (validation error)
-                        """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                            1. Dish price must be greater than zero
+                            2. Invalid request payload (validation error)
+                            """, content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Dish not found",
                             content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
@@ -140,9 +140,9 @@ public class DishController {
                     @ApiResponse(
                             responseCode = "400",
                             description = """
-                            1. Parameter 'page' < 1
-                            2. Parameter 'size' > 100
-                            """,
+                                    1. Parameter 'page' < 1
+                                    2. Parameter 'size' > 100
+                                    """,
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(
                             responseCode = "401",

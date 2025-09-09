@@ -11,7 +11,10 @@ import java.util.Optional;
 
 public interface IDishHandler {
     DishResponseDto createDish(CreateDishRequestDto dto);
+
     DishResponseDto updateDish(Integer id, UpdateDishRequestDto dto);
+
     DishResponseDto updateDishStatus(Integer id, UpdateDishStatusRequestDto dto);
+
     PaginationResponseDto<DishListItemResponseDto> getPaginatedByCategoryIdSortedByName(int page, int size, Optional<Integer> categoryId);
 }

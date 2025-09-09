@@ -40,19 +40,18 @@ public class RestaurantController {
             summary = "Create restaurant",
             description = "Requires role ADMIN",
             responses = {
-            @ApiResponse(responseCode = "201", description = "Restaurant created",
-                    content = @Content(contentSchema = @Schema(implementation = RestaurantResponseDto.class))),
-                @ApiResponse(responseCode = "404", description = """
-                        1. Invalid restaurant name
-                        2. Restaurant already exists
-                        3. User role should be OWNER
-                        """,
-                        content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
-                @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
-                        content = @Content(schema = @Schema(implementation = ApiError.class))),
-                @ApiResponse(responseCode = "403", description = "Forbidden: requires role ADMIN",
-                        content = @Content(schema = @Schema(implementation = ApiError.class)))
-        }
+                    @ApiResponse(responseCode = "201", description = "Restaurant created",
+                            content = @Content(contentSchema = @Schema(implementation = RestaurantResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = """
+                            1. Invalid restaurant name
+                            2. Restaurant already existse
+                            """,
+                            content = @Content(contentSchema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Forbidden: requires role ADMIN",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -154,9 +153,9 @@ public class RestaurantController {
                     @ApiResponse(
                             responseCode = "400",
                             description = """
-                            1. Parameter 'page' < 1
-                            2. Parameter 'size' > 100
-                            """,
+                                    1. Parameter 'page' < 1
+                                    2. Parameter 'size' > 100
+                                    """,
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(
                             responseCode = "401",

@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients
 public class FoodCurtServiceApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(FoodCurtServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FoodCurtServiceApplication.class, args);
+    }
 }
