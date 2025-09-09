@@ -6,9 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface IDishRepository extends JpaRepository<DishEntity, Integer> {
     boolean existsByIdAndRestaurantOwnerDocumentNumber(Integer dishId, Long ownerDocumentNumber);
 
     @Query("SELECT d FROM DishEntity d WHERE d.category.id = :categoryId")
     Page<DishEntity> findAllByCategoryId(Integer categoryId, Pageable pageable);
+
+    @Query("SELECT COUNT(DISTINCT d.restaurant.nit) FROM DishEntity d WHERE d.id IN :dishIds")
+    long countDistinctRestaurantsByDishIds(List<Integer> dishIds);
+
+    @Query("SELECT d.restaurant.nit FROM DishEntity d WHERE d.id = :dishId")
+    Long findRestaurantNitByDishId(Integer dishId);
 }

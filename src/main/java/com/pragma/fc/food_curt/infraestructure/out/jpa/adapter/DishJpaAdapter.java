@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DishJpaAdapter implements IDishPersistencePort {
@@ -55,8 +56,8 @@ public class DishJpaAdapter implements IDishPersistencePort {
         DishEntity dishEntity = dishRepository.findById(id)
                 .orElseThrow(() -> new DishNotFoundException(id));
 
-        if(price != null) dishEntity.setPrice(price);
-        if(description != null) dishEntity.setDescription(description);
+        if (price != null) dishEntity.setPrice(price);
+        if (description != null) dishEntity.setDescription(description);
 
         DishEntity updatedDish = dishRepository.save(dishEntity);
         return dishEntityMapper.toModel(updatedDish);
@@ -80,7 +81,7 @@ public class DishJpaAdapter implements IDishPersistencePort {
     @Override
     public Pagination<Dish> getPaginatedByCategoryIdSortedByName(int page, int size, Optional<Integer> categoryId) {
         Sort sort = Sort.by("name");
-        Pageable pageable = PageRequest.of(page-1, size, sort);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
 
         Page<DishEntity> dishEntityPage = categoryId
                 .map(id -> dishRepository.findAllByCategoryId(id, pageable))
@@ -101,5 +102,23 @@ public class DishJpaAdapter implements IDishPersistencePort {
         pagination.setPageSize(size);
 
         return pagination;
+    }
+
+    @Override
+    public boolean allBelongToSameRestaurant(List<Integer> ids) {
+        return dishRepository.countDistinctRestaurantsByDishIds(ids) == 1;
+    }
+
+    @Override
+    public List<Dish> getAllByIds(List<Integer> ids) {
+        return dishRepository.findAllById(ids)
+                .stream()
+                .map(dishEntityMapper::toModel)
+                .toList();
+    }
+
+    @Override
+    public boolean belongToRestaurant(Integer dishId, Long restaurantNit) {
+        return restaurantNit.equals(dishRepository.findRestaurantNitByDishId(dishId));
     }
 }
