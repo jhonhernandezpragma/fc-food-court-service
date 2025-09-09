@@ -5,6 +5,7 @@ import com.pragma.fc.food_curt.domain.exception.RestaurantInvalidUserRoleExcepti
 import com.pragma.fc.food_curt.infraestructure.exception.OwnerRestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantAlreadyExistsException;
 import com.pragma.fc.food_curt.infraestructure.exception.RestaurantNotFoundException;
+import com.pragma.fc.food_curt.infraestructure.exception.WorkerRestaurantNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -40,6 +41,11 @@ public class RestaurantExceptionHandler {
 
     @ExceptionHandler(OwnerRestaurantNotFoundException.class)
     public ResponseEntity<ApiError> handleOwnerRestaurantNotFound(OwnerRestaurantNotFoundException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(WorkerRestaurantNotFoundException.class)
+    public ResponseEntity<ApiError> handleWorkerRestaurantNotFound(WorkerRestaurantNotFoundException ex, WebRequest request) {
         return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 }

@@ -2,6 +2,7 @@ package com.pragma.fc.food_curt.infraestructure.configuration;
 
 import com.pragma.fc.food_curt.domain.api.IDishServicePort;
 import com.pragma.fc.food_curt.domain.api.IOrderServicePort;
+import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.spi.IOrderPersistencePort;
 import com.pragma.fc.food_curt.domain.usecase.OrderUseCase;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.adapter.OrderJpaAdapter;
@@ -25,10 +26,11 @@ public class OrderBeanConfiguration {
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final IOrderStatusRepository orderStatusRepository;
     private final EntityManager entityManager;
+    private final IRestaurantServicePort restaurantServicePort;
 
     @Bean
     public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(dishServicePort, orderPersistencePort());
+        return new OrderUseCase(dishServicePort, orderPersistencePort(), restaurantServicePort);
     }
 
     @Bean
