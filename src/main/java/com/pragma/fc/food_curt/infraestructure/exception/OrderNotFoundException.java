@@ -1,0 +1,7 @@
+package com.pragma.fc.food_curt.infraestructure.exception;
+
+public class OrderNotFoundException extends RuntimeException {
+    public OrderNotFoundException() {
+        super("Order not found");
+    }
+}
