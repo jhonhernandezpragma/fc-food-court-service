@@ -33,6 +33,9 @@ public class OrderEntity {
     @Column(nullable = false)
     private Long customerDocumentNumber;
 
+    @Column(nullable = true)
+    private Long workerDocumentNumber;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "status_id")
     private OrderStatusEntity status;

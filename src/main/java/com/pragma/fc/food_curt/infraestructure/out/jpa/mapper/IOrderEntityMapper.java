@@ -6,6 +6,7 @@ import com.pragma.fc.food_curt.domain.model.OrderStatus;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderDishEntity;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderDishId;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderEntity;
+import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderStatusEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -21,17 +22,24 @@ import java.util.stream.Collectors;
 public interface IOrderEntityMapper {
     default OrderEntity toEntity(Order order, List<OrderItem> orderItems, IDishEntityMapper dishMapper, IRestaurantEntityMapper restaurantMapper) {
         if (order == null) return null;
+        OrderStatusEntity orderStatus = new OrderStatusEntity();
 
         OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderId(order.getOrderId());
         orderEntity.setRestaurant(restaurantMapper.toEntity(order.getRestaurant()));
         orderEntity.setCustomerDocumentNumber(order.getCustomerDocumentNumber());
+        orderEntity.setWorkerDocumentNumber(order.getWorkerDocumentNumber());
         orderEntity.setCreatedAt(order.getCreatedAt());
 
         Set<OrderDishEntity> orderDishEntities = orderItems
                 .stream()
                 .map(item -> {
                     OrderDishEntity orderDishEntity = new OrderDishEntity();
-                    orderDishEntity.setId(new OrderDishId());
+                    OrderDishId id = new OrderDishId();
+                    id.setOrderId(order.getOrderId());
+                    id.setDishId(item.getDish().getId());
+
+                    orderDishEntity.setId(id);
                     orderDishEntity.setDish((dishMapper.toEntity(item.getDish())));
                     orderDishEntity.setPrice(item.getDish().getPrice());
                     orderDishEntity.setQuantity(item.getQuantity());
@@ -51,7 +59,9 @@ public interface IOrderEntityMapper {
         order.setOrderId(entity.getOrderId());
         order.setRestaurant(restaurantMapper.toModel(entity.getRestaurant()));
         order.setStatus(OrderStatus.valueOf(entity.getStatus().getName()));
-        order.setCustomerDocumentNumber(order.getCustomerDocumentNumber());
+        order.setCustomerDocumentNumber(entity.getCustomerDocumentNumber());
+        order.setWorkerDocumentNumber(entity.getWorkerDocumentNumber());
+        order.setCreatedAt(entity.getCreatedAt());
 
         if (entity.getOrderDishes() != null) {
             List<OrderItem> items = entity.getOrderDishes().stream()
@@ -66,7 +76,6 @@ public interface IOrderEntityMapper {
             order.setItems(items);
         }
 
-        order.setCreatedAt(entity.getCreatedAt());
         return order;
     }
 }
