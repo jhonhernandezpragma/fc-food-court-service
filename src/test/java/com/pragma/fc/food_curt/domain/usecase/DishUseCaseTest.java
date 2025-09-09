@@ -1,5 +1,6 @@
 package com.pragma.fc.food_curt.domain.usecase;
 
+import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import com.pragma.fc.food_curt.domain.exception.DishNonPositivePriceException;
 import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OwnerNotAuthorizedForRestaurantException;
@@ -8,7 +9,6 @@ import com.pragma.fc.food_curt.domain.model.DishCategory;
 import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.model.Restaurant;
 import com.pragma.fc.food_curt.domain.spi.IDishPersistencePort;
-import com.pragma.fc.food_curt.domain.api.IRestaurantServicePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DishUseCaseTest {
@@ -237,3 +240,4 @@ class DishUseCaseTest {
         verify(dishPersistencePort).getPaginatedByCategoryIdSortedByName(1, 10, Optional.empty());
     }
 }
+

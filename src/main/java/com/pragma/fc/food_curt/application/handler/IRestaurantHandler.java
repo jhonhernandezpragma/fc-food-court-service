@@ -8,7 +8,10 @@ import com.pragma.fc.food_curt.application.dto.response.WorkerRestaurantResponse
 
 public interface IRestaurantHandler {
     RestaurantResponseDto createRestaurant(CreateRestaurantRequestDto dto);
+
     Long getRestaurantNitByOwner();
+
     WorkerRestaurantResponseDto assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber);
+
     PaginationResponseDto<RestaurantListItemResponseDto> getAllPaginatedAndSortedByName(int page, int size);
 }

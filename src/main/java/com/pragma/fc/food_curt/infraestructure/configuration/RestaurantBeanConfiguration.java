@@ -34,7 +34,7 @@ public class RestaurantBeanConfiguration {
         return new RestaurantJpaAdapter(restaurantRepository, restaurantWorkerRepository, restaurantWorkerEntityMapper, restaurantEntityMapper);
     }
 
-   @Bean
+    @Bean
     public IUserClientPort userClientPort() {
         return new UserFeignAdapter(userClientFeign);
     }

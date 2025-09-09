@@ -6,9 +6,14 @@ import com.pragma.fc.food_curt.domain.usecase.output.UseCaseRestaurantWorkerOutp
 
 public interface IRestaurantPersistencePort {
     Restaurant createRestaurant(Restaurant restaurant);
+
     Long getRestaurantNitByOwner(Long ownerDocumentNumber);
+
     UseCaseRestaurantWorkerOutput assignWorkerToRestaurant(Long restaurantNit, Long userDocumentNumber);
+
     Boolean existsWorkerByDocumentNumber(Long workerDocumentNumber);
+
     Boolean existsRestaurantByOwner(Long restaurantNit, Long ownerDocumentNumber);
+
     Pagination<Restaurant> getAllPaginatedAndSortedByName(int page, int size);
 }

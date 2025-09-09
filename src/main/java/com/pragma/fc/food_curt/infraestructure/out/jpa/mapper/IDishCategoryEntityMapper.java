@@ -14,6 +14,7 @@ import org.mapstruct.ReportingPolicy;
 public interface IDishCategoryEntityMapper {
     @Named("modelToEntity")
     DishCategoryEntity toEntity(DishCategory dishCategory);
+
     @Named("entityToModel")
     DishCategory toModel(DishCategoryEntity entity);
 }

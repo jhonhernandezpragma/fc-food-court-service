@@ -42,4 +42,5 @@ public class DishEntity {
 
     @Column(nullable = false)
     private Boolean isActive;
+
 }
