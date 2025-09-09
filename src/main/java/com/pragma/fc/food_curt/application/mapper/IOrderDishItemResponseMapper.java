@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
 public interface IOrderDishItemResponseMapper {
     @Mapping(target = "dishId", source = "dish.id")
     @Mapping(target = "name", source = "dish.name")
-    @Mapping(target = "unitPrice", source = "dish.price")
+    @Mapping(target = "unitPrice", source = "price")
     @Named("modelToDto")
     OrderDishItemResponseDto toDto(OrderItem item);
 }
