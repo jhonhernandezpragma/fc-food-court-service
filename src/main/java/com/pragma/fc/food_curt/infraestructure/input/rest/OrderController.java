@@ -158,4 +158,50 @@ public class OrderController {
                         response
                 ));
     }
+
+    @Operation(
+            summary = "Mark order as Ready",
+            description = "Mark specified order as ready and notifies users. Requires authentication and role WORKER.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order marked as Ready successfully",
+                            content = @Content(schema = @Schema(implementation = OrderResponseDto.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order not in 'preparation' state",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = """
+                                        1. Forbidden: requires role WORKER,
+                                        2. Worker and order do not match
+                                    """,
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('WORKER')")
+    @PutMapping("/{orderId}/ready")
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> markOrderAsReady(@PathVariable @NotNull Integer orderId) {
+        OrderResponseDto result = orderHandler.markAsReady(orderId);
+        return ResponseEntity.ok(
+                new ApiSuccess<>(
+                        "Order has been marked as ready",
+                        result
+                )
+        );
+    }
 }

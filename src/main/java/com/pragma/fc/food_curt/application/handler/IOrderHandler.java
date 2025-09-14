@@ -12,4 +12,6 @@ public interface IOrderHandler {
     PaginationResponseDto<OrderResponseDto> getPaginatedByStatusSortedByDate(int page, int size, Optional<Integer> statusId);
 
     OrderResponseDto assignWorkerToOrder(Integer orderId);
+
+    OrderResponseDto markAsReady(Integer orderId);
 }

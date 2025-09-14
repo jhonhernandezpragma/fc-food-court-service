@@ -4,6 +4,8 @@ import com.pragma.fc.food_curt.domain.exception.ActiveOrderAlreadyExistsExceptio
 import com.pragma.fc.food_curt.domain.exception.DishesFromDifferentRestaurantsException;
 import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentException;
 import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
+import com.pragma.fc.food_curt.domain.exception.OrderNotInPreparationException;
+import com.pragma.fc.food_curt.domain.exception.OrderWorkerMismatchException;
 import com.pragma.fc.food_curt.domain.exception.WorkerRestaurantMismatchException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderStatusNotFoundException;
@@ -37,7 +39,7 @@ public class OrderExceptionHandler {
 
     @ExceptionHandler(InvalidOrderStatusForAssignmentException.class)
     public ResponseEntity<ApiError> handleInvalidOrderStatus(InvalidOrderStatusForAssignmentException ex, WebRequest request) {
-        return ErrorUtils.buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
+        return ErrorUtils.buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
     @ExceptionHandler(OrderAlreadyAssignedException.class)
@@ -53,6 +55,17 @@ public class OrderExceptionHandler {
     @ExceptionHandler(WorkerRestaurantMismatchException.class)
     public ResponseEntity<ApiError> handleWorkerRestaurantMismatch(WorkerRestaurantMismatchException ex, WebRequest request) {
         return ErrorUtils.buildError(HttpStatus.FORBIDDEN, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OrderWorkerMismatchException.class)
+    public ResponseEntity<ApiError> handleOrderWorkerMismatch(OrderWorkerMismatchException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.FORBIDDEN, ex.getMessage(), request);
+    }
+
+
+    @ExceptionHandler(OrderNotInPreparationException.class)
+    public ResponseEntity<ApiError> handleOrderNotInPreparation(OrderNotInPreparationException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
 }
