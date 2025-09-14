@@ -9,4 +9,8 @@ public interface IOrderServicePort {
     Order createOrder(Order order, Long customerDocumentNumber);
 
     Pagination<Order> getPaginatedByStatusSortedByDate(int page, int size, Optional<Integer> orderStatusId, Long workerDocumentNumber);
+
+    Order assignWorkerToOrder(Integer orderId, Long workerDocumentNumber);
+
+    Order markAsReady(Integer orderId, Long workerDocumentNumber);
 }

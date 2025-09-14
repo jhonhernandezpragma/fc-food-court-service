@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -105,5 +107,101 @@ public class OrderController {
                         "Paginated list of orders retrieved successfully",
                         response
                 ));
+    }
+
+    @Operation(
+            summary = "Assign a worker to an order",
+            description = "Assigns the authenticated worker to the specified order. Requires authentication and role WORKER.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Worker assigned to order successfully",
+                            content = @Content(schema = @Schema(implementation = OrderResponseDto.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Invalid order status for assignment",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order already assigned to another worker",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = """
+                                        1. Forbidden: requires role WORKER,
+                                        2. Worker and restaurant do not match
+                                    """,
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('WORKER')")
+    @PutMapping("/{orderId}/assign-worker")
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> assignWorkerToOrder(@PathVariable @NotNull Integer orderId) {
+        OrderResponseDto response = orderHandler.assignWorkerToOrder(orderId);
+        return ResponseEntity
+                .ok(new ApiSuccess<>(
+                        "Worker assigned to order successfully",
+                        response
+                ));
+    }
+
+    @Operation(
+            summary = "Mark order as Ready",
+            description = "Mark specified order as ready and notifies users. Requires authentication and role WORKER.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order marked as Ready successfully",
+                            content = @Content(schema = @Schema(implementation = OrderResponseDto.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order not in 'preparation' state",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = """
+                                        1. Forbidden: requires role WORKER,
+                                        2. Worker and order do not match
+                                    """,
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('WORKER')")
+    @PutMapping("/{orderId}/ready")
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> markOrderAsReady(@PathVariable @NotNull Integer orderId) {
+        OrderResponseDto result = orderHandler.markAsReady(orderId);
+        return ResponseEntity.ok(
+                new ApiSuccess<>(
+                        "Order has been marked as ready",
+                        result
+                )
+        );
     }
 }
