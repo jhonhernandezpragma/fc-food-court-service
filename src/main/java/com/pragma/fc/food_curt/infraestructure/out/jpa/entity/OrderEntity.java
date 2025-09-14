@@ -43,6 +43,7 @@ public class OrderEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    //    TODO: review fetch = FetchType.LAZY in lists
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderDishEntity> orderDishes = new HashSet<>();
 }

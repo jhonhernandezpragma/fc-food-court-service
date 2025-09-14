@@ -120,12 +120,15 @@ public class OrderController {
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "Invalid order status for assignment",
+                            description = "Order status not exists",
                             content = @Content(schema = @Schema(implementation = ApiError.class))
                     ),
                     @ApiResponse(
                             responseCode = "409",
-                            description = "Order already assigned to another worker",
+                            description = """
+                                        1. Order already assigned to another worker
+                                        2. Invalid order status for assignment
+                                    """,
                             content = @Content(schema = @Schema(implementation = ApiError.class))
                     ),
                     @ApiResponse(

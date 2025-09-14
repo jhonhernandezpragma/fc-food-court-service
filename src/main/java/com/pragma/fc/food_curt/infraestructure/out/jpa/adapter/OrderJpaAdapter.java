@@ -129,6 +129,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
                 .stream()
                 .collect(Collectors.toMap(item -> item.getDish().getId(), OrderItem::getQuantity));
 
+        // TODO: move to use case
         List<OrderItem> orderItems = dishServicePort.getAllByIds(dishIds)
                 .stream()
                 .map(dish -> {
