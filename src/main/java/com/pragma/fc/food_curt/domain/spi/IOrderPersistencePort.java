@@ -1,6 +1,7 @@
 package com.pragma.fc.food_curt.domain.spi;
 
 import com.pragma.fc.food_curt.domain.model.Order;
+import com.pragma.fc.food_curt.domain.model.OrderOtp;
 import com.pragma.fc.food_curt.domain.model.Pagination;
 
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface IOrderPersistencePort {
     Order getById(Integer orderId);
 
     Order updateOrder(Order order);
+
+    void addOtpCode(OrderOtp orderOtp);
 }

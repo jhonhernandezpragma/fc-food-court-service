@@ -9,11 +9,17 @@ import com.pragma.fc.food_curt.domain.exception.DuplicateDishIdException;
 import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentException;
 import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
+import com.pragma.fc.food_curt.domain.exception.OrderNotInPreparationException;
+import com.pragma.fc.food_curt.domain.exception.OrderWorkerMismatchException;
 import com.pragma.fc.food_curt.domain.exception.WorkerRestaurantMismatchException;
 import com.pragma.fc.food_curt.domain.model.Order;
+import com.pragma.fc.food_curt.domain.model.OrderOtp;
 import com.pragma.fc.food_curt.domain.model.OrderStatus;
 import com.pragma.fc.food_curt.domain.model.Pagination;
+import com.pragma.fc.food_curt.domain.spi.INotificationClientPort;
 import com.pragma.fc.food_curt.domain.spi.IOrderPersistencePort;
+import com.pragma.fc.food_curt.domain.spi.IOtpServicePort;
+import com.pragma.fc.food_curt.domain.spi.IUserClientPort;
 import com.pragma.fc.food_curt.infraestructure.exception.InvalidRestaurantOrderException;
 
 import java.time.LocalDateTime;
@@ -25,11 +31,19 @@ public class OrderUseCase implements IOrderServicePort {
     private final IDishServicePort dishServicePort;
     private final IOrderPersistencePort orderPersistencePort;
     private final IRestaurantServicePort restaurantServicePort;
+    private final INotificationClientPort notificationClientPort;
+    private final IOtpServicePort otpServicePort;
+    private final Integer otpExpirationMinutes;
+    private final IUserClientPort userClientPort;
 
-    public OrderUseCase(IDishServicePort dishServicePort, IOrderPersistencePort orderPersistencePort, IRestaurantServicePort restaurantServicePort) {
+    public OrderUseCase(IDishServicePort dishServicePort, IOrderPersistencePort orderPersistencePort, IRestaurantServicePort restaurantServicePort, INotificationClientPort notificationClientPort, IOtpServicePort otpServicePort, Integer otpExpirationMinutes, IUserClientPort userClientPort) {
         this.dishServicePort = dishServicePort;
         this.orderPersistencePort = orderPersistencePort;
         this.restaurantServicePort = restaurantServicePort;
+        this.notificationClientPort = notificationClientPort;
+        this.otpServicePort = otpServicePort;
+        this.otpExpirationMinutes = otpExpirationMinutes;
+        this.userClientPort = userClientPort;
     }
 
     @Override
@@ -103,4 +117,43 @@ public class OrderUseCase implements IOrderServicePort {
         return orderPersistencePort.updateOrder(order);
     }
 
+    @Override
+    public Order markAsReady(Integer orderId, Long workerDocumentNumber) {
+        Order order = orderPersistencePort.getById(orderId);
+
+        if (!order.getWorkerDocumentNumber().equals(workerDocumentNumber)) {
+            throw new OrderWorkerMismatchException(orderId);
+        }
+
+        if (!order.getStatus().equals(OrderStatus.IN_PREPARATION)) {
+            throw new OrderNotInPreparationException(orderId, order.getStatus().name());
+        }
+
+        order.setStatus(OrderStatus.READY);
+
+        LocalDateTime expirationDate = LocalDateTime.now().plusMinutes(otpExpirationMinutes);
+        String otpCode = otpServicePort.generateOtp();
+
+        OrderOtp orderOtp = new OrderOtp(
+                null,
+                orderId,
+                otpCode,
+                LocalDateTime.now(),
+                expirationDate,
+                false
+        );
+
+        orderPersistencePort.addOtpCode(orderOtp);
+
+        Order orderUpdated = orderPersistencePort.updateOrder(order);
+
+        Long customerDocumentNumber = order.getCustomerDocumentNumber();
+        String customerPhoneNumber = userClientPort.getPhoneNumberByDocumentNumber(customerDocumentNumber);
+
+        if (customerPhoneNumber != null) {
+            notificationClientPort.sendOrderReadyNotification(customerPhoneNumber, orderId.toString(), otpCode);
+        }
+
+        return orderUpdated;
+    }
 }
