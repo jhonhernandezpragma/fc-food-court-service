@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserRoleResponseDto {
-    private String name;
+public class SendSmsResponseDto {
+    private String messageId;
+    private String to;
 }
