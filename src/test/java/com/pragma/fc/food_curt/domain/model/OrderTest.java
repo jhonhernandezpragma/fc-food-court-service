@@ -24,6 +24,7 @@ class OrderTest {
         Order order = new Order(
                 10,
                 99999999L,
+                888888L,
                 restaurant,
                 OrderStatus.PENDING,
                 now,
@@ -32,6 +33,7 @@ class OrderTest {
 
         assertThat(order.getOrderId()).isEqualTo(10);
         assertThat(order.getCustomerDocumentNumber()).isEqualTo(99999999L);
+        assertThat(order.getWorkerDocumentNumber()).isEqualTo(888888L);
         assertThat(order.getRestaurant()).isEqualTo(restaurant);
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
         assertThat(order.getCreatedAt()).isEqualTo(now);
@@ -56,6 +58,7 @@ class OrderTest {
         Order order = new Order();
         order.setOrderId(20);
         order.setCustomerDocumentNumber(88888888L);
+        order.setWorkerDocumentNumber(88888888L);
         order.setRestaurant(restaurant);
         order.setStatus(OrderStatus.READY);
         order.setCreatedAt(LocalDateTime.of(2025, 9, 8, 12, 30));
@@ -63,6 +66,7 @@ class OrderTest {
 
         assertThat(order.getOrderId()).isEqualTo(20);
         assertThat(order.getCustomerDocumentNumber()).isEqualTo(88888888L);
+        assertThat(order.getWorkerDocumentNumber()).isEqualTo(88888888L);
         assertThat(order.getRestaurant().getName()).isEqualTo("My Restaurant");
         assertThat(order.getStatus()).isEqualTo(OrderStatus.READY);
         assertThat(order.getItems()).hasSize(1);
