@@ -17,5 +17,9 @@ public interface IOrderPersistencePort {
 
     Order updateOrder(Order order);
 
-    void addOtpCode(OrderOtp orderOtp);
+    OrderOtp addOtpCode(OrderOtp orderOtp);
+
+    OrderOtp updateOtp(OrderOtp orderOtp);
+
+    OrderOtp getLastOtpByOrderId(Integer orderId);
 }

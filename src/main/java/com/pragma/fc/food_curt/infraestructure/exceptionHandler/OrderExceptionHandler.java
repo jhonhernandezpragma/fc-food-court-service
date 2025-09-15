@@ -5,9 +5,12 @@ import com.pragma.fc.food_curt.domain.exception.DishesFromDifferentRestaurantsEx
 import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentException;
 import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
 import com.pragma.fc.food_curt.domain.exception.OrderNotInPreparationException;
+import com.pragma.fc.food_curt.domain.exception.OrderNotInReadyException;
+import com.pragma.fc.food_curt.domain.exception.OrderOtpInvalidException;
 import com.pragma.fc.food_curt.domain.exception.OrderWorkerMismatchException;
 import com.pragma.fc.food_curt.domain.exception.WorkerRestaurantMismatchException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderNotFoundException;
+import com.pragma.fc.food_curt.infraestructure.exception.OrderOtpNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderStatusNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.input.rest.dto.ApiError;
 import org.springframework.core.Ordered;
@@ -62,9 +65,23 @@ public class OrderExceptionHandler {
         return ErrorUtils.buildError(HttpStatus.FORBIDDEN, ex.getMessage(), request);
     }
 
-
     @ExceptionHandler(OrderNotInPreparationException.class)
     public ResponseEntity<ApiError> handleOrderNotInPreparation(OrderNotInPreparationException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OrderOtpInvalidException.class)
+    public ResponseEntity<ApiError> handleOrderOtpInvalid(OrderOtpInvalidException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OrderOtpNotFoundException.class)
+    public ResponseEntity<ApiError> handleOrderOtpNotFound(OrderOtpNotFoundException ex, WebRequest request) {
+        return ErrorUtils.buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OrderNotInReadyException.class)
+    public ResponseEntity<ApiError> handleOrderNotInReady(OrderNotInReadyException ex, WebRequest request) {
         return ErrorUtils.buildError(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 

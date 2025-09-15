@@ -12,4 +12,6 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface IOrderOtpEntityMapper {
     OrderOtpEntity toEntity(OrderOtp orderOtp);
+
+    OrderOtp toModel(OrderOtpEntity entity);
 }

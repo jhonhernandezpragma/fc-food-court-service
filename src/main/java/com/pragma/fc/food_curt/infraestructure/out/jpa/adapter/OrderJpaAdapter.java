@@ -8,6 +8,7 @@ import com.pragma.fc.food_curt.domain.model.Pagination;
 import com.pragma.fc.food_curt.domain.spi.IOrderPersistencePort;
 import com.pragma.fc.food_curt.infraestructure.exception.DishNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderNotFoundException;
+import com.pragma.fc.food_curt.infraestructure.exception.OrderOtpNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.exception.OrderStatusNotFoundException;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderEntity;
 import com.pragma.fc.food_curt.infraestructure.out.jpa.entity.OrderOtpEntity;
@@ -114,9 +115,24 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public void addOtpCode(OrderOtp orderOtp) {
+    public OrderOtp addOtpCode(OrderOtp orderOtp) {
         OrderOtpEntity entity = otpEntityMapper.toEntity(orderOtp);
-        orderOtpRepository.save(entity);
+        OrderOtpEntity newOtp = orderOtpRepository.save(entity);
+        return otpEntityMapper.toModel(newOtp);
+    }
+
+    @Override
+    public OrderOtp updateOtp(OrderOtp orderOtp) {
+        OrderOtpEntity entity = otpEntityMapper.toEntity(orderOtp);
+        OrderOtpEntity updatedOtp = orderOtpRepository.save(entity);
+        return otpEntityMapper.toModel(updatedOtp);
+    }
+
+    @Override
+    public OrderOtp getLastOtpByOrderId(Integer orderId) {
+        OrderOtpEntity orderOtpEntity = orderOtpRepository.findFirstByOrderIdOrderByCreatedAtDesc(orderId)
+                .orElseThrow(() -> new OrderOtpNotFoundException(orderId));
+        return otpEntityMapper.toModel(orderOtpEntity);
     }
 
     private Order storeOrder(Order order) {

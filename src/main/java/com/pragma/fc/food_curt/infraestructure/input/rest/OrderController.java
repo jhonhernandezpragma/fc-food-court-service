@@ -1,6 +1,7 @@
 package com.pragma.fc.food_curt.infraestructure.input.rest;
 
 import com.pragma.fc.food_curt.application.dto.request.CreateOrderRequestDto;
+import com.pragma.fc.food_curt.application.dto.request.FinishOrderRequestDto;
 import com.pragma.fc.food_curt.application.dto.response.OrderResponseDto;
 import com.pragma.fc.food_curt.application.dto.response.PaginationResponseDto;
 import com.pragma.fc.food_curt.application.handler.IOrderHandler;
@@ -203,6 +204,55 @@ public class OrderController {
         return ResponseEntity.ok(
                 new ApiSuccess<>(
                         "Order has been marked as ready",
+                        result
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Mark order as delivered",
+            description = "Mark specified order as delivered. Requires authentication and role WORKER.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order marked as Delivered successfully",
+                            content = @Content(schema = @Schema(implementation = OrderResponseDto.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order not in 'ready' state",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = """
+                                        1. Forbidden: requires role WORKER,
+                                        2. Worker and order do not match
+                                    """,
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: missing or invalid access token",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('WORKER')")
+    @PutMapping("/{orderId}/deliver")
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> deliverhOrder(
+            @PathVariable @NotNull Integer orderId,
+            @RequestBody @Valid FinishOrderRequestDto dto
+    ) {
+        OrderResponseDto result = orderHandler.finishOrder(orderId, dto.getOtp());
+        return ResponseEntity.ok(
+                new ApiSuccess<>(
+                        "Order has been marked as finished",
                         result
                 )
         );

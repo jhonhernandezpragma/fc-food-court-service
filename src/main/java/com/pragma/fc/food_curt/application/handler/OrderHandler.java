@@ -58,6 +58,13 @@ public class OrderHandler implements IOrderHandler {
         return orderResponseMapper.toDto(updatedOrder);
     }
 
+    @Override
+    public OrderResponseDto finishOrder(Integer orderId, String otpCode) {
+        Long workerDocumentNumber = extractDocumentNumber();
+        Order updatedOrder = orderServicePort.finishOrder(orderId, workerDocumentNumber, otpCode);
+        return orderResponseMapper.toDto(updatedOrder);
+    }
+
     private Long extractDocumentNumber() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long documentNumber = null;

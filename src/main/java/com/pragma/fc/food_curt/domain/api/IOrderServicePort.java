@@ -13,4 +13,6 @@ public interface IOrderServicePort {
     Order assignWorkerToOrder(Integer orderId, Long workerDocumentNumber);
 
     Order markAsReady(Integer orderId, Long workerDocumentNumber);
+
+    Order finishOrder(Integer orderId, Long workerDocumentNumber, String otpCode);
 }

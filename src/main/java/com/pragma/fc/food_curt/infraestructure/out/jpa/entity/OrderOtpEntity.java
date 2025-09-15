@@ -17,7 +17,7 @@ public class OrderOtpEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String orderId;
+    private Integer orderId;
 
     private String code;
 

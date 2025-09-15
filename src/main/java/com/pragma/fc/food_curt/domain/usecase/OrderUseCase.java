@@ -10,6 +10,8 @@ import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentE
 import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
 import com.pragma.fc.food_curt.domain.exception.OrderNotInPreparationException;
+import com.pragma.fc.food_curt.domain.exception.OrderNotInReadyException;
+import com.pragma.fc.food_curt.domain.exception.OrderOtpInvalidException;
 import com.pragma.fc.food_curt.domain.exception.OrderWorkerMismatchException;
 import com.pragma.fc.food_curt.domain.exception.WorkerRestaurantMismatchException;
 import com.pragma.fc.food_curt.domain.model.Order;
@@ -155,5 +157,30 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         return orderUpdated;
+    }
+
+    @Override
+    public Order finishOrder(Integer orderId, Long workerDocumentNumber, String otpCode) {
+        Order order = orderPersistencePort.getById(orderId);
+
+        if (!order.getWorkerDocumentNumber().equals(workerDocumentNumber)) {
+            throw new OrderWorkerMismatchException(orderId);
+        }
+
+        if (!order.getStatus().equals(OrderStatus.READY)) {
+            throw new OrderNotInReadyException(orderId, order.getStatus().name());
+        }
+
+        OrderOtp orderOtp = orderPersistencePort.getLastOtpByOrderId(order.getOrderId());
+
+        if (orderOtp == null || orderOtp.getUsed() || !orderOtp.getCode().equals(otpCode)) {
+            throw new OrderOtpInvalidException();
+        }
+
+        orderOtp.setUsed(true);
+        orderPersistencePort.updateOtp(orderOtp);
+
+        order.setStatus(OrderStatus.DELIVERED);
+        return orderPersistencePort.updateOrder(order);
     }
 }

@@ -14,4 +14,6 @@ public interface IOrderHandler {
     OrderResponseDto assignWorkerToOrder(Integer orderId);
 
     OrderResponseDto markAsReady(Integer orderId);
+
+    OrderResponseDto finishOrder(Integer orderId, String otpCode);
 }
