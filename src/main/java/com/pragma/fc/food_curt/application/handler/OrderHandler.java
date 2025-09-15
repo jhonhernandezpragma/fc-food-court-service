@@ -65,6 +65,13 @@ public class OrderHandler implements IOrderHandler {
         return orderResponseMapper.toDto(updatedOrder);
     }
 
+    @Override
+    public OrderResponseDto cancelOrder(Integer orderId) {
+        Long customerDocumentNumber = extractDocumentNumber();
+        Order updatedOrder = orderServicePort.cancelOrder(orderId, customerDocumentNumber);
+        return orderResponseMapper.toDto(updatedOrder);
+    }
+
     private Long extractDocumentNumber() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long documentNumber = null;
