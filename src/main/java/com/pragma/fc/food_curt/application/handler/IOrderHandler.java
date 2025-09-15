@@ -16,4 +16,6 @@ public interface IOrderHandler {
     OrderResponseDto markAsReady(Integer orderId);
 
     OrderResponseDto finishOrder(Integer orderId, String otpCode);
+
+    OrderResponseDto cancelOrder(Integer orderId);
 }

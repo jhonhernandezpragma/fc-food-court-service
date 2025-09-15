@@ -9,6 +9,8 @@ import com.pragma.fc.food_curt.domain.exception.DuplicateDishIdException;
 import com.pragma.fc.food_curt.domain.exception.InvalidOrderStatusForAssignmentException;
 import com.pragma.fc.food_curt.domain.exception.InvalidPaginationParameterException;
 import com.pragma.fc.food_curt.domain.exception.OrderAlreadyAssignedException;
+import com.pragma.fc.food_curt.domain.exception.OrderCustomerMismatchException;
+import com.pragma.fc.food_curt.domain.exception.OrderNotInPendingException;
 import com.pragma.fc.food_curt.domain.exception.OrderNotInPreparationException;
 import com.pragma.fc.food_curt.domain.exception.OrderNotInReadyException;
 import com.pragma.fc.food_curt.domain.exception.OrderOtpInvalidException;
@@ -181,6 +183,22 @@ public class OrderUseCase implements IOrderServicePort {
         orderPersistencePort.updateOtp(orderOtp);
 
         order.setStatus(OrderStatus.DELIVERED);
+        return orderPersistencePort.updateOrder(order);
+    }
+
+    @Override
+    public Order cancelOrder(Integer orderId, Long customerDocumentNumber) {
+        Order order = orderPersistencePort.getById(orderId);
+
+        if (!order.getCustomerDocumentNumber().equals(customerDocumentNumber)) {
+            throw new OrderCustomerMismatchException(orderId);
+        }
+
+        if (!order.getStatus().equals(OrderStatus.PENDING)) {
+            throw new OrderNotInPendingException(orderId, order.getStatus().name());
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
         return orderPersistencePort.updateOrder(order);
     }
 }

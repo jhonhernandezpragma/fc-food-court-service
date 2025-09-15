@@ -245,7 +245,7 @@ public class OrderController {
     )
     @PreAuthorize("hasRole('WORKER')")
     @PutMapping("/{orderId}/deliver")
-    public ResponseEntity<ApiSuccess<OrderResponseDto>> deliverhOrder(
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> deliverOrder(
             @PathVariable @NotNull Integer orderId,
             @RequestBody @Valid FinishOrderRequestDto dto
     ) {
@@ -253,6 +253,18 @@ public class OrderController {
         return ResponseEntity.ok(
                 new ApiSuccess<>(
                         "Order has been marked as finished",
+                        result
+                )
+        );
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiSuccess<OrderResponseDto>> cancelOrder(@PathVariable @NotNull Integer orderId) {
+        OrderResponseDto result = orderHandler.cancelOrder(orderId);
+        return ResponseEntity.ok(
+                new ApiSuccess<>(
+                        "Order has been marked as canceled",
                         result
                 )
         );

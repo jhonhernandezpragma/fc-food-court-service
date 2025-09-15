@@ -15,4 +15,6 @@ public interface IOrderServicePort {
     Order markAsReady(Integer orderId, Long workerDocumentNumber);
 
     Order finishOrder(Integer orderId, Long workerDocumentNumber, String otpCode);
+
+    Order cancelOrder(Integer orderId, Long customerDocumentNumber);
 }
